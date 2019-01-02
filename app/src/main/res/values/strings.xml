@@ -64,10 +64,10 @@ But first, let me kindly ask you to:
     popularity of this pattern follow:
 
   <ul>
-  <li>Tones in this pattern form one consistent sequence of Fifths. I.e., if I take an arbitrary tone and then seventimes take next tone
-   as the fifth of the previous one, I get this pattern.</li>
-  <li>If I take an arbitrary tone in this pattern and count the fifth or fourth tone from it, I always get the perfect fifth or fourth. Ehm, except
-   for one position, but that cannot be fixed. But except this one, I never get an augmented fourth or diminished fifth. That's why these intervals
+  <li>Tones in this pattern form one consistent sequence of Fifths. I.e., if we take an arbitrary tone and then seventimes take next tone
+   as the fifth of the previous one, we get this pattern.</li>
+  <li>If we take an arbitrary tone in this pattern and count the fifth or fourth tone from it, we always get the perfect fifth or fourth. Ehm, except
+   for one position, but that cannot be fixed. But except this one, we never get an augmented fourth or diminished fifth. That's why these intervals
     are called perfect - they are (almost) always the same ones.</li>
     <li>Only two of the seven tones have a distance of augmented fourth (/diminished fifth) to some other tone. If we remove these two, we get so called pentatonic scale.</li>
     <li>More than 7 tones don't work, because 8th fifth (or any other tone) would have distance of augmented fourth (/diminished fifth) to more than two other tones.</li>
@@ -138,7 +138,8 @@ But first, let me kindly ask you to:
     and minor algebras and sometimes throw in the diminished degree or some out-of-scale tones too (E.g.,
     forming a major chord in place of a minor one). Tonic-subdominant-dominant algebras may not always
     be the best choice (or the sufficient choice) for understanding harmony of such pieces, for instance because simple
-    simple degree-by-degree chord successions are used.
+    simple degree-by-degree chord successions are used. Still, knowing the major-minor-dual relations and subdominant-dominant relations
+    simplifies musicians life.
 
     <h2>Credits</h2>
     This app is brought to you by Karel Tuček, as open-source (no ads, free of charge, under MIT licence). As with all my publicly available

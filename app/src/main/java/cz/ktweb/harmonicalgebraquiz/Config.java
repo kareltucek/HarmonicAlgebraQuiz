@@ -12,6 +12,6 @@ public class Config {
 
 
     public static int Green = Color.rgb(60,200,60);
-    public static int Orange = Color.rgb(180,160,0);
+    public static int Orange = Color.rgb(220,200,0);
     public static int Red = Color.rgb(200,60,60);
 }

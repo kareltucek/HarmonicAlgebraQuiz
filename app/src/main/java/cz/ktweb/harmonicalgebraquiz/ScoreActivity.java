@@ -15,7 +15,7 @@ public class ScoreActivity extends AppCompatActivity {
         setContentView(R.layout.activity_score);
 
         TextView tw = (TextView)findViewById(R.id.score);
-        tw.setText(Config.LastScore + "%");
+        tw.setText(" " + Config.LastScore + "%");
         if(Config.LastScore > 90) {
             tw.setTextColor(Config.Green);
         } else if (Config.LastScore > 60) {
