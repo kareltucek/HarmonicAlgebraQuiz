@@ -1,0 +1,152 @@
+<resources>
+    <string name="app_name">Harmonic Algebra Quiz</string>
+    <string name="help">        <![CDATA[
+    <h2>Introduction</h2>
+        This app is a tool designed to help learning the circle of fifths and the relations which the circle represents.
+
+        For this purpose, there are two types of quizes:
+
+  <ul>
+  <li> Harmonic function quiz</li>
+  <li> Signature quiz</li>
+  </ul>
+
+        Furthermore, we try to explain some related chapters of the music theory in the following text.
+
+<h2>Bug reporting, feedback, etc.</h2>
+But first, let me kindly ask you to:
+<ul>
+<li>Report bugs if you encounter any. You can do so on github ( http://github.com/kareltucek/HarmonigAlgebraQuiz ).</li>
+<li>Leave some feedback. If you do not want to post publicly or to give bad ratings, you are welcome to drop ma a few words to my tucek.karel mailbox hosted at gmail. </li>
+<ul>
+
+  <h2>Harmonic function quiz</h2>
+  Harmonic function quiz determines the key by specifying either major tonic or minor tonic. Determining
+  the rest of harmonic functions is up to the user. When all degrees were encountered twice, new key is selected.
+   The following notation is used:
+
+  <ul>
+  <li> D for dominant</li>
+  <li> S for subdominant</li>
+  <li> T for tonic</li>
+  <li> Uppercase letters mark major chords, lowercase mark minor chords.</li>
+  </ul>
+
+  <h2>Signature quiz</h2>
+  In the signature quiz, the user is given a number of flats or sharps and is supposed to determine the
+  scale. First, all major scales are iterated in one block, followed by another minor block.
+
+  <h2>Importance of fifths</h2>
+  Simply stated, our ear likes consonance of tones whose frequency is given by a simple fraction. In other words,
+  those which yield short period even when added together.
+
+  The simplest consonancy is given by 2:1 fraction. Which does not count because it is the same tone, just sounding a "bit higher".
+
+  The next simplest fraction is 3:2, which gives exactly the "fifth". I.e., the fifth tone in a common scale (or the 7th tone in the 12 tone system).
+
+  The next simplest fraction is 4:3, which gives the fourth. The fourth is basically an inverted fifth, because the distance from a fifth tone
+  of a scale to the next tonic" is the fourth. Also, note that the two fractions "added" together (3/2*4/3) yield exactly the next tonic one octave higher.
+
+  The other intervals are more complicated, but the concept of inversion applies too - (minor) sixth is an inverted (major) third,
+  (major) sixth is an inverted (minor) third and so on.
+
+  So the relation of "being in the distance of a fifth" of two ones is important because their consonancy is the "best one".
+  Furthermore, major thirds and minor thirds work well in both melodic successions and in harmonic context (i.e., played at the same time).
+  Seconds work in melodic successions, but not in harmonic context. Augmented fourths/diminished fifths work in neither melodic succession nor in harmonic context.
+  There are exceptions to *all* these rules, but this is a reasonable rule of thumb.
+
+  <h2> Equivalency of Minor and Major scales </h2>
+  Western music is founded on a 12 tone system. These 12 tones are evenly spread so that if we take a tone and multiply its frequency by 2^(1/12),
+   we get the next tone in the sequence.
+
+    Furthermore, 7 tones out of these 12 are selected to form a scale. Which seven tones should be selected is not strictly given, but
+    practical concerns yield one popular pattern, which has distances 2-2-1-2-2-2-1 (or any rotation of these). Some of the reasons for
+    popularity of this pattern follow:
+
+  <ul>
+  <li>Tones in this pattern form one consistent sequence of Fifths. I.e., if I take an arbitrary tone and then seventimes take next tone
+   as the fifth of the previous one, I get this pattern.</li>
+  <li>If I take an arbitrary tone in this pattern and count the fifth or fourth tone from it, I always get the perfect fifth or fourth. Ehm, except
+   for one position, but that cannot be fixed. But except this one, I never get an augmented fourth or diminished fifth. That's why these intervals
+    are called perfect - they are (almost) always the same ones.</li>
+    <li>Only two of the seven tones have a distance of augmented fourth (/diminished fifth) to some other tone. If we remove these two, we get so called pentatonic scale.</li>
+    <li>More than 7 tones don't work, because 8th fifth (or any other tone) would have distance of augmented fourth (/diminished fifth) to more than two other tones.</li>
+  </ul>
+
+  If we take the discussed pattern, we get major scale. If we take the same pattern, but begin at its sixth position, we get a minor scale - a
+  scale on exactly same tones as the major scale.
+
+  <h2>Creating new scales</h2>
+  Furthermore, if we take an existing major scale, we can create a new one by taking its fifth degree as a tonic, and applying a sharp on its third position.
+  Alternatively, we can do the inverse - starting at the fourth degree and adding a flat to the seventh degree.
+
+    <h2>The Circle of Fifths</h2>
+    The circle of fifths visualises the described relations of adding flats or sharps, as well as the relation of "being a fifth to" or "being a
+    fourth to", and also the relation of "taking 7 related scale-forming tones". The circle (or a mental picture of the circle) can be
+     used to quickly determind all those relations if memorized.
+
+    It is a simple circle consisting of all the 12 tones, arranged so that the neighbouring tones are in the distance of fifths
+    and fourths. Namely for every node, the node to the right is in the distance of a fifth. The node to the left is in the distance of a fourth
+    (which is the distance of a fifth from the perspective of that node).
+
+    Furthermore, we can inscribe another circle if fifths into the first one, shifted by 3 positions. This way, we get the dual minor-major roles aligned,
+    as well as both tonic-subdominant-dominant algebras.
+
+
+    <h2>Chords and Harmonic Algebras</h2>
+
+    The idea is that each degree of a scale (a note or a chord based on the note)
+    represents a unique harmonic function. If we take a regular major/minor scale and build
+    a chord on each degree of the scale, we will get three major chords, three minor chords and one diminished
+    chord. Furthermore, we can take these triplets and construct simple harmonic algebras of them, each
+    consisting of a tonic (chord based on first degree), subdominant (chord based on fourth degree) and dominant (chord based on fifth degree).
+    (One of the triplets is based on major tonic while the other triplet is based on the minor tonic of the scale in question.)
+
+    Within a major scale we get:
+
+  <ul>
+    <li> 1th degree - major tonic</li>
+    <li> 2nd degree - minor subdominant</li>
+    <li> 3th degree - minor dominant</li>
+    <li> 4th degree - major subdominant</li>
+    <li> 5th degree - major dominant</li>
+    <li> 6th degree - minor tonic</li>
+    <li> 7th degree - diminished singleton</li>
+    </ul>
+
+    Within a minor scale, we ge exactly the same, except the numbers will be shifted by -2 (or +5) degrees.
+
+    Each triplet consists of a tonic, subdominant and a dominant. These are all in row on the circle of fifths, since dominant stand for fifth degree and
+    subdominant stands for fourth degree(, which is just an inverted fifth). I.e., if we look at the circle, each three consecutive chords
+    form one subdominant-tonic-dominant algebra.
+
+    In music, these degrees have distinct functions:
+  <ul>
+    <li>Tonic is the basic chord - the home chord. It evokes sensation of relaxation, satisfaction. Songs are usually
+    started with this chord and always finished with it.</li>
+    <li>Dominant is a chord found usually at the end of a verse, before tonic.
+    It evokes the sensation of unrest, dissatisfaction, a sort of a desire to return back to tonic.
+    It shares its first degree with the tonic.</li>
+    <li>Subdominant sounds a bit as the dominant. Just different. In music, it is usually found somewhere around other chords. It is the detour
+    on song's way from tonic to dominant. It shares its last degree with the tonic.</li>
+    </ul>
+
+    The simplest major-scale songs can be accompanied by a (major) tonic and a (major) dominant only, rarely encountering the
+    major subdominant too.
+
+    Pieces in minor scales (and more complex major ones too) are more complicated. They combine both major
+    and minor algebras and sometimes throw in the diminished degree or some out-of-scale tones too (E.g.,
+    forming a major chord in place of a minor one). Tonic-subdominant-dominant algebras may not always
+    be the best choice (or the sufficient choice) for understanding harmony of such pieces, for instance because simple
+    simple degree-by-degree chord successions are used.
+
+    <h2>Credits</h2>
+    This app is brought to you by Karel Tuček, as open-source (no ads, free of charge, under MIT licence). As with all my publicly available
+    projects, it was written with my own needs in mind - i.e., it was designed to be simple and useful, not to generate
+    profit.
+
+
+  ]]>
+
+    </string>
+</resources>
