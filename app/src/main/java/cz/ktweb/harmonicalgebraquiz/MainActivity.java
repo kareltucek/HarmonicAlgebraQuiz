@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -19,7 +21,9 @@ enum LabelType {
     minor_flats(2),
     major_any(3),
     major_sharps(4),
-    major_flats(5);
+    major_flats(5),
+    major_tsd(6),
+    flatsharp(7);
 
     private final int value;
     private LabelType(int value) {
@@ -28,6 +32,13 @@ enum LabelType {
 
     public int getValue() {
         return value;
+    }
+
+    public int getMinorValue() {
+        return value > 2 ? value - 3 : value;
+    }
+    public int getMajorValue() {
+        return value < 3 ? value + 3 : value;
     }
 }
 
@@ -54,10 +65,12 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         button.setOnClickListener(this);
         button.setTextAppearance(R.style.AppTheme);
         button.setAllCaps(false);
+        button.setSingleLine(true);
+        button.setEllipsize(TextUtils.TruncateAt.END);
         layout.addView(button);
     }
 
-    void addButtons() {
+    void addButtonsPiano() {
         int i = 0;
         addSpace(1, R.id.blacks);
         addButton(i++, R.id.whites);
@@ -76,6 +89,26 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         addSpace(2, R.id.blacks);
         addButton(0, R.id.whites);
         addSpace(1, R.id.blacks);
+
+    }
+
+    void addButtonsFlatSharp() {
+        addButton(0, R.id.whites);
+        addButton(0, R.id.blacks);
+        for(int i = 0; i < 7; i++) {
+            addButton(i+1, R.id.whites);
+        }
+        for(int i = 0; i < 7; i++) {
+            addButton(i+11, R.id.blacks);
+        }
+    }
+
+    void addButtons() {
+        if(Config.QType == 1 && Config.InvertedMode) {
+            addButtonsFlatSharp();
+        } else {
+            addButtonsPiano();
+        }
     }
 
     @Override
@@ -92,37 +125,67 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         ((TextView)findViewById(R.id.wrooong)).setTextColor(Config.Red);
     }
 
+    enum majorFunction {
+        major,
+        minor,
+        diminished,
+        none
+    }
+
+    majorFunction[] Functions = {
+            majorFunction.major,
+            majorFunction.none,
+            majorFunction.minor,
+            majorFunction.none,
+            majorFunction.minor,
+            majorFunction.major,
+            majorFunction.none,
+            majorFunction.major,
+            majorFunction.none,
+            majorFunction.minor,
+            majorFunction.none,
+            majorFunction.diminished
+    };
+
     String[][] Labels = {
             {"c", " ", "d", " ", "e", "f", " ", "g", " ", "a", " ", "b"},
-            {"c", "db", "d", "eb", "e", "f", "gb", "g", "ab", "a", "bb", "b"},
+            {"c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"},
             {"c", "db", "d", "eb", "e", "f", "gb", "g", "ab", "a", "bb", "b"},
             {"C", " ", "D", " ", "E", "F", " ", "G", " ", "A", " ", "B"},
             {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"},
-            {"C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"}
+            {"C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"},
+            {"T", " ", "s", " ", "d", "S", " ", "D", " ", "t", " ", "dim"},
+
     };
 
     String[][] FifthCircle = {
-            {"db", "ab", "eb", "bb", "f", "c", "g", "d", "a", "e", "b", "f#", "c#", "g#", "d#", "a#", "b#"},
-            {"Fb", "Cb", "Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#", "C#", "G#"},
+            {"gb", "db", "ab", "eb", "bb", "f", "c", "g", "d", "a", "e", "b", "f#", "c#", "g#", "d#", "a#", "e#", "b#"},
+            {"Bbb", "Fb", "Cb", "Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#", "C#", "G#", "D#"},
     };
     int[] FifthCenters = {
             9,
             0
     };
     int[][] Positions = {
-            {5, 7, 3, 8, 10},
-            {5, 7, 9, 2, 4}
+            {5, 7, 3, 8, 10, 0, 2},
+            {5, 7, 9, 2, 4, 0, 11}
+    };
+    int[][] FifthPositions = {
+            {-1, 1, 0, -1, 1, 0, 2},
+            {-1, 1, 0, -1, 1, 0, 2}
     };
     String[][] Questions = {
-            {"s", "d", "T", "S", "D", "t"},
-            {"S", "D", "t", "s", "d", "T"}
+            {"s", "d", "T", "S", "D", "t", "dim"},
+            {"S", "D", "t", "s", "d", "T", "dim"}
     };
     int[][] QuestionsTypes = {
-            {0, 0, 1, 1, 1, 0},
-            {1, 1, 0, 0, 0, 1}
+            {0, 0, 1, 1, 1, 0, 0},
+            {1, 1, 0, 0, 0, 1, 0}
     };
-    int Center = 8;
+    int Center = 9;
     int QuestionCount = 0;
+    int[] TonicTypes = new int[QuestionCount];
+    int[] TonicIds = new int[QuestionCount];
     String[] TonicString = new String[QuestionCount];
     String[] QuestionStrings = new String[QuestionCount];
     LabelType[] LabelTypes = new LabelType[QuestionCount];
@@ -156,7 +219,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     }
 
     LabelType decodeLabel(int type, int keyPos) {
-        if(keyPos > Center) {
+        if (keyPos > Center) {
             return type == 1 ? LabelType.major_sharps : LabelType.minor_sharps;
         } else if (keyPos < Center) {
             return type == 1 ? LabelType.major_flats : LabelType.minor_flats;
@@ -171,9 +234,15 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         Answers = new int[QuestionCount];
         TonicString = new String[QuestionCount];
         LabelTypes = new LabelType[QuestionCount];
+        TonicIds = new int[QuestionCount];
+        TonicTypes = new int[QuestionCount];
     }
 
     void generateQuestion() {
+        CurrentSet++;
+        if(CurrentSet > Config.Sets) {
+            Finish();
+        }
         if(Config.QType == 0) {
             generateAlgebraQuestion();
         }
@@ -183,50 +252,85 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     }
 
     void generateSigQuestion() {
-        CurrentSet++;
-        if(CurrentSet > Config.Sets) {
-            Finish();
-        }
         int setSize = Config.Difficulty * 2 + 1;
         setQuestionCount(setSize*2);
-        for(int type = 0; type < 2; type++) {
+        int[] flipped = new int[setSize];
+        for(int j = 0; j < 2; j++) {
             int[] perm = generatePermutation(setSize);
             for(int i = 0; i < setSize; i++) {
-                int q = type*setSize + i;
+                int type = j;
+                if (Config.InvertedMode && Config.ShuffleInvertedSigMode) {
+                    if(type == 0) {
+                        flipped[i] = rnd.nextInt(2);
+                        type = flipped[i];
+                    } else {
+                        type = 1 - flipped[i];
+                    }
+                }
+                Log.d("dbg", "type = " + type);
+                int q = j*setSize + i;
                 int keyPos = Center-Config.Difficulty + perm[i];
                 int sharps = keyPos - Center;
-                LabelTypes[q] = type == 1 ? LabelType.major_any : LabelType.minor_any;
-                TonicString[q] = type == 1 ? "Major" : "Minor";
-                Answers[q] = decodeKey(type, keyPos);
-                if(sharps == 0) {
-                    QuestionStrings[q] = "0 #/b";
-                } else if (sharps > 0) {
-                    QuestionStrings[q] = "" + sharps + "#";
-                } else {
-                    QuestionStrings[q] = "" + (-sharps) + "b";
+                TonicIds[q] = -1;
+                TonicTypes[q] = 0;
+                if(Config.InvertedMode) {
+                    LabelTypes[q] = LabelType.flatsharp;
+                    TonicString[q] = "";
+                    if(sharps >= 0) {
+                        Answers[q] = sharps;
+                    } else {
+                        Answers[q] = 10 - sharps;
+                    }
+                    QuestionStrings[q] = FifthCircle[type][keyPos];
+                    Log.d("dbg", "Qstr = " + QuestionStrings[q] );
+                    Log.d("dbg", "Qstr tpe = " + type);
+                }
+                else {
+                    LabelTypes[q] = type == 1 ? LabelType.major_any : LabelType.minor_any;
+                    TonicString[q] = type == 1 ? "Major" : "Minor";
+                    Answers[q] = decodeKey(type, keyPos);
+                    if (sharps == 0) {
+                        QuestionStrings[q] = "0 #/b";
+                    } else if (sharps > 0) {
+                        QuestionStrings[q] = "" + sharps + "#";
+                    } else {
+                        QuestionStrings[q] = "" + (-sharps) + "b";
+                    }
                 }
             }
         }
     }
 
     void generateAlgebraQuestion(){
-        int passes = 2;
-        setQuestionCount(passes*5);
+        int setSize = Questions[0].length;
+        setQuestionCount(Config.Passes*setSize);
         int type = rnd.nextInt(2);
         int tonicPosition = rnd.nextInt(1+2*Config.Difficulty) + Center - Config.Difficulty;
         int tonic = decodeKey(type, tonicPosition);
         int[] perm = new int[QuestionCount];
-        for(int i = 0; i < passes; i++) {
-            int[] p = generatePermutation(5);
-            for(int j = 0; j < 5; j++) {
-                perm[i*5+j] = p[j];
+        for(int i = 0; i < Config.Passes; i++) {
+            int[] p = generatePermutation(setSize);
+            for(int j = 0; j < setSize; j++) {
+                perm[i*setSize+j] = p[j];
             }
         }
         for(int i = 0; i < perm.length; i++) {
-            TonicString[i] = Questions[type][5] + " = " + FifthCircle[type][tonicPosition];
-            QuestionStrings[i] = Questions[type][perm[i]] + "";
-            Answers[i] = (tonic + Positions[type][perm[i]]) % 12;
-            LabelTypes[i] = decodeLabel(QuestionsTypes[type][perm[i]], tonicPosition);
+            if(Config.InvertedMode) {
+                TonicIds[i] = tonic;
+                TonicTypes[i] = type;
+                TonicString[i] = Questions[type][5] + " = " + FifthCircle[type][tonicPosition];
+                QuestionStrings[i] = FifthCircle[QuestionsTypes[type][perm[i]]][tonicPosition + FifthPositions[type][perm[i]]] + "";
+                Answers[i] = (tonic + Positions[type][perm[i]]) % 12;
+                LabelTypes[i] = decodeLabel(QuestionsTypes[type][perm[i]], tonicPosition);
+            }
+            else {
+                TonicIds[i] = tonic;
+                TonicTypes[i] = type;
+                TonicString[i] = Questions[type][5] + " = " + FifthCircle[type][tonicPosition];
+                QuestionStrings[i] = Questions[type][perm[i]] + "";
+                Answers[i] = (tonic + Positions[type][perm[i]]) % 12;
+                LabelTypes[i] = decodeLabel(QuestionsTypes[type][perm[i]], tonicPosition);
+            }
         }
     }
 
@@ -259,12 +363,48 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         UpdateQuestion();
     }
 
+    String determineLabel(int tone) {
+        if(Config.InvertedMode) {
+            if(Config.QType == 0 ) {
+                int majorTonic = TonicTypes[CurrentQuestion] == 1 ? TonicIds[CurrentQuestion] : (TonicIds[CurrentQuestion] + 3) % 12;
+                int degree = (tone - majorTonic + 7 * 12) % 12;
+                return Labels[LabelType.major_tsd.getValue()][degree];
+            } else {
+                if(tone < 10) {
+                    return "" + tone + "#";
+                } else {
+                    return "" + (tone - 10) + "b";
+                }
+            }
+        }
+        else {
+            if (Config.VisualMode && Config.QType == 0) {
+                int majorTonic = TonicTypes[CurrentQuestion] == 1 ? TonicIds[CurrentQuestion] : (TonicIds[CurrentQuestion] + 3) % 12;
+                int degree = (tone - majorTonic + 7 * 12) % 12;
+                if (Functions[degree] == majorFunction.major) {
+                    return Labels[LabelTypes[CurrentQuestion].getMajorValue()][tone];
+                } else if (Functions[degree] == majorFunction.minor) {
+                    return Labels[LabelTypes[CurrentQuestion].getMinorValue()][tone];
+                } else if (Functions[degree] == majorFunction.diminished) {
+                    return Labels[LabelTypes[CurrentQuestion].getMinorValue()][tone] + "dim";
+                } else {
+                    return "";
+                }
+            } else {
+                return Labels[LabelTypes[CurrentQuestion].getValue()][tone];
+            }
+        }
+    }
+
     public void setupButtonProps(Button b, boolean red, boolean green) {
+        int tone = (int)b.getTag(R.id.tone);
         int r = red ? 50 : 0;
         int g = green ? 50 : 0;
-        int dark = !(boolean)b.getTag(R.id.colour) ? 50 : 0;
+        int black = !(boolean)b.getTag(R.id.colour) ? 50 : 0;
+        int tonic = tone == TonicIds[CurrentQuestion] && Config.HighlightTonic ? 20 : 0;
+        int dark = black + tonic;
         b.getBackground().setColorFilter(Color.rgb(Config.BasicDarkness -g - dark,Config.BasicDarkness - r - dark,Config.BasicDarkness - r - g - dark), PorterDuff.Mode.MULTIPLY);
-        b.setText(Labels[LabelTypes[CurrentQuestion].getValue()][(int)b.getTag(R.id.tone)]);
+        b.setText(determineLabel(tone));
     }
 
     public void onClick(View v)
