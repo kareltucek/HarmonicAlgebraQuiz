@@ -1,7 +1,6 @@
 package cz.ktweb.harmonicalgebraquiz;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -26,7 +25,18 @@ public class ScoreActivity extends AppCompatActivity {
     }
 
     public void onClickHarmonicQuiz(View v) {
-        Intent i = new Intent(getApplicationContext(),MenuActivity.class);
+        onBackPressed();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i;
+        if(Config.QType == QuizType.EarQuiz) {
+            i = new Intent(getApplicationContext(), MenuEarActivity.class);
+        } else {
+            i = new Intent(getApplicationContext(), MenuKeyActivity.class);
+        }
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
 }

@@ -1,24 +1,126 @@
 <resources>
-    <string name="app_name">Harmonic Algebra Quiz</string>
-    <string name="help">        <![CDATA[
-    <h2>Introduction</h2>
-        This app is a tool designed to help learning the circle of fifths and the relations which the circle represents.
+    <string name="app_name">Harmonic Algebra Trainer</string>
+    <string name="helpIntro">        <![CDATA[
+        <h2>Introduction</h2>
+        This app is a tool designed to help learning the circle of fifths and the relations which the circle represents. Also, later releases
+        contain ear training modes.
 
-        For this purpose, there are two types of quizes:
+<br><br>
+        Namely:
 
   <ul>
-  <li> Harmonic function quiz</li>
-  <li> Signature quiz</li>
+    <li> Cycle of fifths - function quiz</li>
+    <li> Cycle of fifths -  Signature quiz</li>
+    <li> Ear trainer </li>
+    <li> Progression trainer </li>
   </ul>
 
-        Furthermore, we try to explain some related chapters of the music theory in the following text.
-
 <h2>Bug reporting, feedback, etc.</h2>
-But first, let me kindly ask you to:
+Let me kindly ask you to:
 <ul>
-<li>Report bugs if you encounter any. You can do so on github ( http://github.com/kareltucek/HarmonigAlgebraQuiz ).</li>
-<li>Leave some feedback. If you do not want to post publicly or to give bad ratings, you are welcome to drop me a few words to my tucek.karel mailbox hosted at gmail. </li>
+<li> Report bugs if you encounter any. You can do so on github ( http://github.com/kareltucek/HarmonigAlgebraQuiz ).</li>
+<li> Leave some feedback. If you do not want to post publicly or to give bad ratings, you are welcome to drop me a few words to my tucek.karel mailbox hosted at gmail. </li>
 <ul>
+
+
+    <h2>Credits</h2>
+    This app was written by Karel Tuček. As with all my publicly available
+    projects, it was written with my own needs in mind - i.e., it was designed to be simple and useful, not to generate
+    profit. Not necessarily nice & intuitive, but with configuration options uncensored for the sake of simplicity.
+  ]]>
+    </string>
+
+    <string name="helpEar">        <![CDATA[
+        <h2>Introduction</h2>
+        The ear trainer provides a tool for improving relative musical hearing via Alain Benbassat\'s method, also often abbreviated
+        as "FET - Functional Ear Trainer". This method is
+        already available on desktop via https://www.miles.be/ flash app and on android via "Functional Ear Trainer". This
+        implementation provides less user comfort :-), yet is designed on a slightly different philosophy, fixing some drawbacks
+        of the other implementations.
+
+        <h2>The aims</h2>
+
+        At the end of training, the user should be able to confidently recognize degrees of a scale by ear. The learning process
+        is designed to build up the ability by small steps without any prerequisites.
+
+        <h2>The method</h2>
+
+          The basic idea of the method is that tones should be always recognized within context of a key. Within the key,
+          every degree is to be associated with a specific sensation ("colour/taste of the sound"). The key is established via
+          playing a cadence - chord progression of tonic, subdominant and dominant, which substitutes intro of a music piece.
+
+<br><br>
+          Every training question consists of the following three steps:
+          <ul>
+          <li> First, the key is established by playing a cadence (this may happen at the begenning of a quiz or at the beginning of every question).   </li>
+          <li> Then, a tone is played and the user is asked to guess the tone as a degree of the reference key.</li>
+          <li> Finally the trainer plays resolution towards the nearest tonic.</li>
+          </ul>
+
+          The learning process goes as follows in multiple phases. Each phase may take weeks or even months of daily training. Each phase
+          should end by the user reaching a steady 98%+ score.
+
+          <ul>
+            <li> In the first phase the user associates a tone stimuli with the resolution pattern and some sensation. This creates
+             a new brain connection for each harmonic function of the basic Major scale.</li>
+            <li> In further phases, restrictions (like single-octave mode, cadences/resolutions) are dropped,
+                and the user\'s neural network is relearned so that it unlearns
+                undesired connections which were established in the first phase. First, dependence on octave should be eliminated, later
+                fixation on tonic and dependence on cadences and resolutions. </li>
+            <li> After mastering the Major context, the user should continue by learning chromatic tones in major context.
+               This is vital to eliminate pattern dependence. Otherwise, the brain will
+               mix up similar tone sequences in different scale types.
+                </li>
+            <li> After mastering the major context, the user should continue with minor context.</li>
+          </ul>
+
+          At the end of the process, the user should be able to hear melodies in contexts of their keys. For instance, to write
+          down music without using the trial-and-error approach.
+
+        <h2>Implementation Differences</h2>
+
+          <ul>
+          <li> Our ear trainer is a learning tool, not a game. We allow selective replay of cadences when necessary. Also,
+          we do not penalize "giveups" by lowering score, since making correct associations is much more important
+          for the learning process than getting a good score via "wild guesses".</li>
+          <li> We take into account the interference caused by previous question in cadence-less mode. For this reason, we
+          end resolutions by playing the last question tone again after resolution ends. This way, the user is able to
+          learn to keep old reference frame without being affected by the "tonic-to-question" relation.</li>
+          <li> We implement "tricky questions", which intentionally repeats incorrectly inputted pairs, allowing for conscious learning
+          and fixing problems.</li>
+          </ul>
+
+        <h2>Tips</h2>
+          <ul>
+          <li>Always aim for score of 99%.</li>
+          <li>Giving up does not lower your score. If you are not sure, better give up and try to create/fix the missing association.</li>
+          <li>You can replay cadence, last question and current question at will. Use this ability.</li>
+          <li>By default, incorrect or gave-up questions are repeated again after a while within the same question set. Use this
+              knowledge to fix problems.</li>
+          <li>Think about the learning process. Think about which associations you are creating. If something does not work, try to
+              figure out why, and fix it.</li>
+          <li>Experiment with different modes and settings. Specific settings will help you overcome specific problems encountered
+              during the learning process.</li>
+          <li>Variation in the learning process may speed up learning. </li>
+          <li>Mastering the major context with resolutions is not sufficient to apply the learned abilities in practice.
+              You need to continue with the chromatic mode. You need to learn to keep context of the current key (despite
+              out-of-scale tones) or to switch to new key at will.</li>
+          <li>After mastering the chromatic mode, you should continue by training with this app and your instrument. The question
+              type contains "continue" modes which will play question by question without any interaction.</li>
+          <li>Think about interferences. Typically, in resolution or cadence mode, the brain will associate tones with respect to the last tone
+              of resolution (tonic) or the last chord of cadence (again tonic), yet in practice the last played tone is not tonic. For this
+              purpose, we provide question modes which repeat the previous question after playing its cadence/resolution. This allows the
+              brain to learn to keep the key context with respect to the last question degree & interval.</li>
+          <li>Be warned. The new brain algebra will interfere with your old one. Using this app may temporarily yet significantly reduce
+              your regular musical abilities and vice versa. You will have to learn how to connect the two into one.</li>
+          </ul>
+
+
+  ]]>
+    </string>
+
+    <string name="helpKey">        <![CDATA[
+
 
   <h2>Harmonic function quiz</h2>
   Harmonic function quiz determines the key by specifying either major tonic or minor tonic. Determining
@@ -30,6 +132,25 @@ But first, let me kindly ask you to:
   <li> S for subdominant</li>
   <li> T for tonic</li>
   <li> Uppercase letters mark major chords, lowercase mark minor chords.</li>
+  <li> dim for the last chord of the scale not covered by the D,S,T,d,s,t letters</li>
+  </ul>
+
+  For instance, lets assume that the first line reads "T = C", it means that we are in C major scale (i.e., C is the tonic). Dominant
+  chord is then G (because it lays one step to the right on the fifths cycle), so if the question reads "D" (as Dominant), the correct
+  answer is "G". If the question reads S as Subdominant, the answer is "F", because F is one step to the left on the cycle.
+
+<br><br>
+  If the letter is lowercase, parallel minor chord has to be entered. E.g., minor tonic of C major is "a".
+
+<br><br>
+  We try to sum up motivation for this function quiz in the following section, however, we strongly encourage the reader to study
+  the music theory from more elaborate resources. The reader should understand:
+
+  <ul>
+    <li> Construction of scales</li>
+    <li> Diatonic chord system</li>
+    <li> German function theory (covered e.g. by wikipedia "Function (music)" article).</li>
+    <li> Viennese function theory</li>
   </ul>
 
   <h2>Signature quiz</h2>
@@ -40,7 +161,7 @@ But first, let me kindly ask you to:
   Simply stated, our ear likes consonance of tones whose frequency is given by a simple fraction. In other words,
   those which yield short period even when added together.
 <br><br>
-  The simplest consonance is given by 2:1 fraction. Which does not count because it is the same tone, just sounding a "bit higher".
+  The simplest consonance is given by 2:1 fraction. Which does not count because it is the same tone, just sounding "an octave higher".
 <br><br>
   The next simplest fraction is 3:2, which gives exactly the "fifth". I.e., the fifth tone in a common scale (or the 7th tone in the 12 tone system).
 <br><br>
@@ -53,8 +174,9 @@ But first, let me kindly ask you to:
   Since the distance of a fifth is given by a simple fraction, the consonance of such two tones is good. We may also say that "being in the distance of a fifth"
   is a good metric of musical relatedness of tones.
   Regarding other intervals, major thirds and minor thirds work well in both melodic successions and in harmonic context (i.e., played at the same time).
-  Seconds work in melodic successions, but not in harmonic context. Augmented fourths/diminished fifths work in neither melodic succession nor in harmonic context.
-  There are exceptions to *all* these rules, but this is a reasonable rule of thumb.
+  Seconds work in melodic successions, but not in harmonic context. Augmented fourth degrees are sometimes used in songs,
+  but generally (as intervals of two consecutive tones), augmented fourths and diminished fifths work in neither melodic succession nor in harmonic context.
+  There are exceptions to *all* these rules, but these rules are a reasonable approximation to begin with.
 
   <h2> Equivalency of Minor and Major scales </h2>
   Western music is founded on a 12 tone system. These 12 tones are evenly spread so that if we take a tone and multiply its frequency by 2^(1/12),
@@ -66,13 +188,13 @@ But first, let me kindly ask you to:
     popularity of this pattern follow:
 
   <ul>
-  <li>Tones in this pattern form one consistent sequence of Fifths. I.e., if we take an arbitrary tone and then seventimes take next tone
+  <li> Tones in this pattern form one consistent sequence of Fifths. I.e., if we take an arbitrary tone and then seventimes take next tone
    as the fifth of the previous one, we get this pattern.</li>
-  <li>If we take an arbitrary tone in this pattern and count the fifth or fourth tone from it, we get the perfect fifth or fourth. Except
+  <li> If we take an arbitrary tone in this pattern and count the fifth or fourth tone from it, we get the perfect fifth or fourth. Except
    for one position which yields augmented fourth/diminished fifth. That's one of the reasons why these intervals
     are called perfect - they are (almost) always the same ones.</li>
-    <li>Only two of the seven tones have a distance of augmented fourth (/diminished fifth) to some other tone (namely to each other). If we remove these two, we get so called pentatonic scale, in which no minor second or augmented fourth is found.</li>
-    <li>More than 7 tones don't work well, because 8th fifth (or any other tone) would yield another augmented fourth (/dim. fifth), which would furthermore be found in a one-step distance between two other tones.
+    <li> Only two of the seven tones have a distance of augmented fourth (/diminished fifth) to some other tone (namely to each other). If we remove these two, we get so called pentatonic scale, in which no minor second or augmented fourth is found.</li>
+    <li> More than 7 tones don't work well, because 8th fifth (or any other tone) would yield another augmented fourth (/dim. fifth), which would furthermore be found in a one-step distance between two other tones.
         While such tones may be used in more exotic melodic successions (jazz, bues, etc.), they are impractical for standard "simple" harmony,
         because we need to choose just one of them anyway.</li>
   </ul>
@@ -126,12 +248,12 @@ But first, let me kindly ask you to:
 <br><br>
     In music, these degrees have distinct functions:
   <ul>
-    <li>Tonic is the basic chord - the home chord. It evokes sensation of relaxation, satisfaction. Songs are usually
+    <li> Tonic is the basic chord - the home chord. It evokes sensation of relaxation, satisfaction. Songs are usually
     started with this chord and always finished with it.</li>
-    <li>Dominant is a chord found usually at the end of a verse, before tonic.
+    <li> Dominant is a chord found usually at the end of a verse, before tonic.
     It evokes the sensation of unrest, dissatisfaction, a sort of a desire to return back to tonic.
     It shares its first degree with the tonic.</li>
-    <li>Subdominant sounds a bit as the dominant. Just different. In music, it is usually found somewhere around other chords. It is the detour
+    <li> Subdominant sounds a bit as the dominant. Just different. In music, it is usually found somewhere around other chords. It is the detour
     on song's way from tonic to dominant. It shares its last degree with the tonic.</li>
     </ul>
 
@@ -142,13 +264,8 @@ But first, let me kindly ask you to:
     and minor algebras and sometimes throw in the diminished degree or some out-of-scale tones too (E.g.,
     forming a major chord in place of a minor one). Tonic-subdominant-dominant algebras may not always
     be the best choice (or the sufficient choice) for understanding harmony of such pieces, for instance because simple
-    simple degree-by-degree chord successions are used. Still, knowing the major-minor-dual relations and subdominant-dominant relations
-    simplifies musicians life.
+    simple degree-by-degree chord successions are used.
 
-    <h2>Credits</h2>
-    This app is brought to you by Karel Tuček, as open-source (no ads, free of charge, under MIT licence). As with all my publicly available
-    projects, it was written with my own needs in mind - i.e., it was designed to be simple and useful, not to generate
-    profit.
 
 
   ]]>
