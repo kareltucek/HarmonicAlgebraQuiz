@@ -97,6 +97,36 @@ public class MenuEarActivity extends AppCompatActivity {
                 Config.EarIntervalLabels = isChecked;
             }
         });
+        checkbox = (CheckBox)findViewById(R.id.noCadences);
+        checkbox.setChecked(Config.NoCadences);
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                Config.NoCadences = isChecked;
+            }
+        });
+        checkbox = (CheckBox)findViewById(R.id.augFouthUp);
+        checkbox.setChecked(Config.AugFourthUp);
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                Config.AugFourthUp = isChecked;
+            }
+        });
+        checkbox = (CheckBox)findViewById(R.id.noGiveUpResolve);
+        checkbox.setChecked(Config.NoGiveupResolve);
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                Config.NoGiveupResolve = isChecked;
+            }
+        });
     }
 
     public void onClickEarQuiz(View v) {
@@ -214,6 +244,13 @@ public class MenuEarActivity extends AppCompatActivity {
                 }
                 if(parent.getId() == R.id.restrictionType) {
                     Config.TypeOfRestriction = RestrictionType.ByValue(position);
+                    if(Config.TypeOfRestriction.BansChromatic() || Config.TypeOfRestriction.RequiresChromatic()) {
+                        ((CheckBox)findViewById(R.id.chromatics)).setChecked(Config.TypeOfRestriction.RequiresChromatic());
+                        ((CheckBox)findViewById(R.id.chromatics)).setEnabled(false);
+                    } else {
+                        ((CheckBox)findViewById(R.id.chromatics)).setChecked(Config.ChromaticMode);
+                        ((CheckBox)findViewById(R.id.chromatics)).setEnabled(true);
+                    }
                 }
                 if(parent.getId() == R.id.questionType) {
                     Config.TypeOfQuestion = QuestionPlayType.ByValue(position);

@@ -179,7 +179,7 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         RedHighlight = -1;
         int idx = (int)v.getTag();
         if(Config.FreeMode) {
-            playChord(algebras[Type][idx]);
+            playFreeChord(algebras[Type][idx]);
         } else {
             if (idx == Question) {
                 NextEnabledAfter--;
@@ -205,8 +205,23 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         Runnable myRunnable = new Runnable() {
             @Override
             public void run() {
-                SystemClock.sleep(200);
-                p.playChordByTones(0, ch.Resolve(Tonic, Config.NormalizedChords), Config.NoteLength*3/2);
+                SystemClock.sleep(Config.DelayBetweenTones);
+                p.playChordByTones(0, ch.Resolve(Tonic, Config.NormalizedChords), Config.NoteLength*2);
+                GreenHighlight = -1;
+                RedHighlight = -1;
+                clearAllButtons();
+            }
+        };
+        playHandler.post(myRunnable);
+    }
+
+    public void playFreeChord(final Chord ch) {
+        Runnable myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                SystemClock.sleep(Config.DelayBetweenTones);
+                p.endAll();
+                p.startChordByTones(0, ch.Resolve(Tonic, Config.NormalizedChords));
                 GreenHighlight = -1;
                 RedHighlight = -1;
                 clearAllButtons();

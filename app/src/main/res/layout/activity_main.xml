@@ -8,8 +8,8 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:layout_width="365dp"
-        android:layout_height="136dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginLeft="16dp"
@@ -48,7 +48,9 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:ellipsize="none"
             android:gravity="center"
+            android:singleLine="false"
             android:text="TextView"
             android:textAppearance="@android:style/TextAppearance.Material.Headline"
             android:textSize="60sp"
@@ -175,7 +177,7 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:gravity="center"
@@ -183,36 +185,94 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/linearLayout2">
 
-        <TextView
-            android:id="@+id/correct"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAllCaps="false"
-            android:textSize="18sp"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="8dp" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/stats2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:text="/"
-            android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/correct"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/currentQ"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0"
+                android:textAllCaps="false"
+                android:textSize="18sp"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="8dp" />
 
-        <TextView
-            android:id="@+id/wrooong"
+            <TextView
+                android:id="@+id/correct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="2"
+                android:textAllCaps="false"
+                android:textSize="18sp"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="8dp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/stats2"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/stats3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="/"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/correct"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/stats2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="/"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/correct"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/qCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="10"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/stats2"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/wrooong"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="1"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/stats2"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

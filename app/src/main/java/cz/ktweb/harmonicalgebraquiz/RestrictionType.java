@@ -1,30 +1,48 @@
 package cz.ktweb.harmonicalgebraquiz;
 
-
+//should be refactored into three separate options - pattern, range size, range root
 enum RestrictionType {
-    lower(0, 0, 5, false, "Lower Half"),
-    upper(1, 6, 12, false, "Upper Half"),
-    octave1(2, 0, 12, false, "Single Octave 1-8"),
-    octave2(3, -6, 5, false, "Single Octave 5-4"),
-    multi_octave(4, -6, 17, false, "Two octave"),
-    two_octave_f(5, -7, 17, true, "Two octave (F rooted)"),
-    two_octave_c(6, 0, 24, true, "Two octave (C rooted)"),
-    two_octave_g(7, -5, 19, true, "Two octave (G rooted)"),
-    two_octave_d(8, 2, 26, true, "Two octave (D rooted)"),
-    three_octave(9, -6, 17+12, false, "Three octave"),
-    three_octave_f(10, -7, 17+12, true, "Three octave (F rooted)"),
-    three_octave_c(11, 0, 24+12, true, "Three octave (C rooted)"),
-    three_octave_g(12, -5, 19+12, true, "Three octave (G rooted)"),
-    three_octave_d(13, 2, 26+12, true, "Three octave (D rooted)"),
+    basic1(0, 5, false, "Basic Learning 1 (lower half)"),
+    basic2(6, 12, false, "Basic Learning 2 (upper half)"),
+    basic3(0, 12, false, "Basic Learning 3 (single octave)"),
+    basic4(-6, 5, false, "Basic Learning 4 (single octave shifted)"),
+    basic5(-6, 17, false, "Basic Learning 5 (multi octave)"),
+    l1(-6, 24, false, "Chromatics Learning 1 (lower/lower)"),
+    l3(-6, 24, false, "Chromatics Learning 2 (lower/both)"),
+    l4(-6, 24, false, "Chromatics Learning 3 (upper/upper)"),
+    l6(-6, 24, false, "Chromatics Learning 4 (upper/both)"),
+    l7(-6, 24, false, "Chromatics Learning 5 (both/both)"),
+    l8(-6, 24, false, "Chromatics Learning 6 (all/all)"),
+    lower(0, 5, false, "Lower Half"),
+    upper(6, 12, false, "Upper Half"),
+    one_octave(0, 12, false, "One octave (tonic rooted)"),
+    one_octave2(-6, 5, false, "One octave (fifth rooted)"),
+    one_octave_f(-7, 5, true, "One octave (F rooted)"),
+    one_octave_c(0, 12, true, "One octave (C rooted)"),
+    one_octave_g(-5, 7, true, "One octave (G rooted)"),
+    one_octave_d(2, 14, true, "One octave (D rooted)"),
+    two_octave(-6, 17, false, "Two octave"),
+    two_octave_f(-7, 17, true, "Two octave (F rooted)"),
+    two_octave_c(0, 24, true, "Two octave (C rooted)"),
+    two_octave_g(-5, 19, true, "Two octave (G rooted)"),
+    two_octave_d(2, 26, true, "Two octave (D rooted)"),
+    three_octave(-6, 17+12, false, "Three octave"),
+    three_octave_f(-7, 17+12, true, "Three octave (F rooted)"),
+    three_octave_c(0, 24+12, true, "Three octave (C rooted)"),
+    three_octave_g(-5, 19+12, true, "Three octave (G rooted)"),
+    three_octave_d(2, 26+12, true, "Three octave (D rooted)"),
     ;
+
+    private final int l2 = 42;
+    private final int l5 = 42;
 
     private final int value;
     private final String label;
     private final int from;
     private final int to;
     private final boolean absolute;
-    private RestrictionType(int value, int from, int to, boolean absolute, String lab) {
-        this.value = value;
+    private RestrictionType(int from, int to, boolean absolute, String lab) {
+        this.value = this.ordinal();
         this.label = lab;
         this.from = from;
         this.to = to;
@@ -36,7 +54,7 @@ enum RestrictionType {
                 return type;
             }
         }
-        return multi_octave;
+        return two_octave;
     }
     public int Position() {
         return value;
@@ -49,12 +67,42 @@ enum RestrictionType {
         return res;
     }
 
-    public static boolean RestrictionAllows(RestrictionType tpe, int deg) {
-        return tpe.from <= deg && tpe.to >= deg;
+    public boolean BansChromatic() {
+        if(this == basic1 || this == basic2 || this == basic3 || this == basic4 || this == basic5) {
+            return true;
+        }
+        return false;
     }
 
-    public boolean Allows(int deg) {
-        return RestrictionAllows(this, deg);
+    public boolean RequiresChromatic() {
+        if(this == l1 || this == l3 || this == l4 || this == l6 || this == l7) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean Allows(ScaleType tpe, int q, int tonic, int tone ) {
+        int deg = (tone - tonic + 7*12) % 12;
+        if(this == l1 || this == l3 || this == l4 || this == l6 || this == l7) {
+            if(q % 2 == 0) {
+                if((this == l4) && deg < 6) {
+                    return false;
+                } else if((this == l1) && deg > 6) {
+                    return false;
+                } else if (!tpe.Contains(deg)){
+                    return false;
+                }
+            } else {
+                if((this == l4 || this == l6) && deg < 6) {
+                    return false;
+                } else if((this == l1 || this == l3) && deg > 6) {
+                    return false;
+                } else if (tpe.Contains(deg)) {
+                    return false;
+                }
+            }
+        }
+        return from <= tone && to >= tone;
     }
 
     public int From() {

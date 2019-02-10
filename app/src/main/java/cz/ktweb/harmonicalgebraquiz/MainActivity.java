@@ -1,7 +1,6 @@
 package cz.ktweb.harmonicalgebraquiz;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -32,7 +31,10 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     public static boolean wantTuning = false;
 
 
-    void addSpace(int weight, int layoutId) {
+    void addSpace(int weight, int layoutId, boolean seriously) {
+        if(!seriously) {
+            return;
+        }
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, 100);
         lp.weight = weight;
         LinearLayout layout = (LinearLayout) findViewById(layoutId);
@@ -100,10 +102,17 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         }
     }
 
-    void addButtonsPiano2(int tonicAt, int shiftBy, ScaleType tpe) {
+    void addButtonsPiano2(int tonicAt, int shiftBy, ScaleType tpe, boolean twoRow) {
         clearLayout(R.id.strings);
         clearLayout(R.id.blacks);
         clearLayout(R.id.whites);
+
+        int whites = R.id.whites;
+        int blacks = R.id.blacks;
+
+        if(!twoRow) {
+            blacks = whites;
+        }
 
         int wh, bl;
         if(tpe.Contains(shiftBy%12)){
@@ -115,44 +124,47 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             bl = 1;
         }
 
-        addSpace(wh, R.id.whites);
-        addSpace(bl, R.id.blacks);
+        addSpace(wh, whites, twoRow);
+        addSpace(bl, blacks, twoRow);
         for(int i = 0; i < 13; i++ ) {
             int j = (i + shiftBy) % 12;
             if(tpe.Contains(j)) {
-                addButton((tonicAt+j)%12, R.id.whites);
+                addButton((tonicAt+j)%12, whites);
                 if(i > 0 && tpe.Contains(j-1)) {
-                    addSpace(2, R.id.blacks);
+                    addSpace(2, blacks, twoRow);
                 }
             } else {
-                addButton((tonicAt+j)%12, R.id.blacks);
+                addButton((tonicAt+j)%12, blacks);
                 if(i > 0 && !tpe.Contains(j-1)) {
-                    addSpace( 2, R.id.whites);
+                    addSpace( 2, whites, twoRow);
                 }
 
             }
         }
-        addSpace(wh, R.id.whites);
-        addSpace(bl, R.id.blacks);
+        addSpace(wh, whites, twoRow);
+        addSpace(bl, blacks, twoRow);
     }
 
     void addButtonsPiano() {
-        addButtonsPiano2(0, 0, ScaleType.major);
+        addButtonsPiano2(0, 0, ScaleType.major, true);
     }
 
     void tuneButtonsSync(final int tonicAt) {
         switch(Config.TypeOfLayout) {
             case relative_native:
-                addButtonsPiano2(tonicAt, 0, Config.TypeOfScale);
+                addButtonsPiano2(tonicAt, 0, Config.TypeOfScale, true);
                 break;
             case relative_cmaj:
-                addButtonsPiano2(tonicAt, 0, ScaleType.major);
+                addButtonsPiano2(tonicAt, 0, ScaleType.major, true);
                 break;
             case piano_shifted:
-                addButtonsPiano2(0, tonicAt, ScaleType.major);
+                addButtonsPiano2(0, tonicAt, ScaleType.major, true);
                 break;
             case piano_cmaj:
-                addButtonsPiano2(0, 0, ScaleType.major);
+                addButtonsPiano2(0, 0, ScaleType.major, true);
+                break;
+            case linear:
+                addButtonsPiano2(tonicAt, 0, ScaleType.major, false);
                 break;
             case violin_1:
                 addStrings(7);
@@ -424,13 +436,19 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
 
     void generateEarQuestion(){
         int setSize = Config.EarSetSize;
+        int lastSharpCount = TonicIds.length == 0 ? 0 : Config.TypeOfScale.GetSharps(TonicIds[0]);
         setQuestionCount(setSize);
         int difficulty = Config.TypeOfKey.Difficulty();
         int sharpcount;
-        if(Config.TypeOfKey == KeyType.c) {
-            sharpcount = Config.TypeOfScale.GetSharps(0);
+        if(Config.TypeOfRestriction.RequiresChromatic()) {
+            Config.ChromaticMode = true; //otherwise learning mode would contain empty set
+        }
+        if(Config.TypeOfRestriction.BansChromatic()) {
+            Config.ChromaticMode = false;
+        }
+        if(Config.TypeOfKey.Absolute()) {
+            sharpcount = Config.TypeOfScale.GetSharps(Config.TypeOfKey.Tonic());
         } else {
-            int lastSharpCount = Config.TypeOfScale.GetSharps(TonicIds[0]);
             do {
                 sharpcount = -difficulty + rnd.nextInt(1 + 2 * difficulty);
             } while (sharpcount == lastSharpCount && difficulty > 0);
@@ -445,10 +463,14 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 int range = Config.TypeOfRestriction.To() - Config.TypeOfRestriction.From();
                 deg = Config.TypeOfRestriction.From() + rnd.nextInt(range) + (Config.TypeOfRestriction.Absolute() ? -actualTonic : 0);
                 tone = deg + actualTonic;
+                //Log.d("gen", "reshuffling -> " + (i > 0 && AnswersOctaved[i-1] == tone));
+
             } while (
-                            (i > 1 && (AnswersOctaved[i-1] == tone || AnswersOctaved[i-2] == tone))
+                            (i > 0 && AnswersOctaved[i-1] == tone)
                         ||
-                            (!Config.TypeOfScale.Contains(deg) && !Config.ChromaticMode)
+                                    (!Config.TypeOfScale.Contains(deg) && !Config.ChromaticMode)
+                        ||
+                                    (!Config.TypeOfRestriction.Allows(Config.TypeOfScale, i, actualTonic, tone))
                         ||
                             (i > 0 && Config.LimitedIntervals && Math.abs(AnswersOctaved[i-1] - tone) > 12)
                     );
@@ -459,6 +481,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             Answers[i] = (tone + 12) % 12;
             AnswersOctaved[i] = tone;
             LabelTypes[i] = labelType;
+            //Log.d("gen", "tone -> " + AnswersOctaved[i]);
         }
         wantTuning = true;
     }
@@ -515,6 +538,10 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         return null;
     }
 
+    void setText(int id, String text) {
+        ((TextView)findViewById(id)).setText(text);
+    }
+
     void UpdateQuestion() {
         runOnUiThread(new Runnable() {
             @Override
@@ -524,8 +551,10 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 tonic.setText(TonicString[CurrentQuestion]);
                 question.setText(QuestionStrings[CurrentQuestion]);
                 clearAllButtonsSync();
-                ((TextView)findViewById(R.id.correct)).setText("" + Correct);
-                ((TextView)findViewById(R.id.wrooong)).setText("" + Wrong);
+                setText(R.id.correct, "" + Correct);
+                setText(R.id.wrooong, "" + Wrong);
+                setText(R.id.currentQ, "" + ((CurrentSet-1) * QuestionCount + CurrentQuestion));
+                setText(R.id.qCount, "" + (Config.Sets * QuestionCount));
                 WasCorrect = true;
                 WasWrong = false;
             }
@@ -592,13 +621,21 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     }
 
     public void setupTrickyQuestion() {
-        Answers[CurrentQuestion+Config.TrickyOffset] = Answers[CurrentQuestion];
-        Answers[CurrentQuestion+Config.TrickyOffset-1] = Answers[CurrentQuestion-1];
-        AnswersOctaved[CurrentQuestion+Config.TrickyOffset] = AnswersOctaved[CurrentQuestion];
-        AnswersOctaved[CurrentQuestion+Config.TrickyOffset-1] = AnswersOctaved[CurrentQuestion-1];
+        setupTrickyQuestionAt(Config.TrickyOffset);
+        setupTrickyQuestionAt(Config.SecondTrickyOffset);
     }
 
-    //because we love asynchronous systems
+    public void setupTrickyQuestionAt(int offset) {
+        if(CurrentQuestion + offset >= QuestionCount || CurrentQuestion < 1) {
+            return;
+        }
+        Answers[CurrentQuestion+offset] = Answers[CurrentQuestion];
+        Answers[CurrentQuestion+offset-1] = Answers[CurrentQuestion-1];
+        AnswersOctaved[CurrentQuestion+offset] = AnswersOctaved[CurrentQuestion];
+        AnswersOctaved[CurrentQuestion+offset-1] = AnswersOctaved[CurrentQuestion-1];
+    }
+
+
     public void handleNextQuestionAsyncPlayAsyncUI(final View v) {
         playingActive++;
         Runnable myRunnable = new Runnable() {
@@ -629,23 +666,31 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         if(Config.QType == QuizType.EarQuiz) {
             PlayQuestion(false);
         }
+        questionChangeInProgress = false;
     }
 
+    boolean questionChangeInProgress = false;
+
     public void onClick(View v) {
+        if(questionChangeInProgress) {
+            return;
+        }
+        questionChangeInProgress = true;
         clearAllButtonsAsync();
         int answer = (int)v.getTag(R.id.tone);
         if(answer == Answers[CurrentQuestion]) {
             if(Config.QType == QuizType.EarQuiz) {
                 PlayAnswer();
-                if(!WasCorrect && Config.TrickyQuestions && CurrentQuestion > 0 && CurrentQuestion < QuestionCount - Config.TrickyOffset) {
+                if(!WasCorrect && Config.TrickyQuestions) {
                     setupTrickyQuestion();
                 }
-                handleNextQuestionAsyncPlayAsyncUI(v);
             }
+            handleNextQuestionAsyncPlayAsyncUI(v);
         } else {
             WasCorrect = false;
             WasWrong = true;
             setupButtonPropsAsync((Button)v, true, false);
+            questionChangeInProgress = false;
         }
     }
 
@@ -663,7 +708,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         WasCorrect = false;
         giveUpButtons(R.id.whites);
         giveUpButtons(R.id.blacks);
-        if(Config.QType == QuizType.EarQuiz) {
+        if(Config.QType == QuizType.EarQuiz && !Config.NoGiveupResolve) {
             PlayResolution();
         }
     }
@@ -678,7 +723,9 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
 
     public void PlayQuestion(boolean repeating) {
         if((CurrentQuestion == 0 || Config.TypeOfQuestion.Cadence()) && !repeating) {
-            playCadenceAsyncPlay();
+            if(repeating || !Config.NoCadences) {
+                playCadenceAsyncPlay();
+            }
         }
         if(CurrentQuestion != 0 && Config.TypeOfQuestion.Tonic() && !repeating) {
             playTonicAsyncPlay();
@@ -708,29 +755,60 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         }
     }
 
+    public int getNearestTonic(int tonic, int answer, boolean inverted) {
+        int tonicLower = answer - ((answer - tonic +7*12)%12);
+        int tonicHigher = answer - ((answer - tonic +7*12)%12) + 12;
+
+        if (answer - tonicLower < tonicHigher - answer) {
+            return inverted ? tonicHigher : tonicLower;
+        } else if (answer - tonicLower > tonicHigher - answer) {
+            return inverted ?  tonicLower : tonicHigher;
+        } else {
+            switch(Config.TypeOfScale.AugFourthDirection()) {
+                case -1:
+                    return inverted ? tonicHigher : tonicLower;
+                case 1:
+                    return inverted ?  tonicLower : tonicHigher;
+                default:
+                    return Config.AugFourthUp ^ inverted ? tonicHigher : tonicLower;
+            }
+        }
+    }
+
+    //todo: refactor prameter choice into the ResolutionType enum
     public void PlayResolution() {
         int answer = AnswersOctaved[CurrentQuestion];
         int tonic = TonicIds[CurrentQuestion];
-        int tonicLower = answer - ((answer - tonic +7*12)%12);
-        int tonicHigher = answer - ((answer - tonic +7*12)%12) + 12;
         int target;
         int from;
         int inc;
         int currentTone;
         if(Config.TypeOfResolution == ResolutionType.last_current && CurrentQuestion > 0) {
-            currentTone = AnswersOctaved[CurrentQuestion-1];
             from = AnswersOctaved[CurrentQuestion-1];
-            target = from < answer ? tonicHigher : tonicLower;
+            target = answer;
+            playToneAsyncPlay(answer, (answer + 7*12) % 12, 0, 0);
+        } else if(Config.TypeOfResolution == ResolutionType.current_lats && CurrentQuestion > 0) {
+            from = answer;
+            target = AnswersOctaved[CurrentQuestion-1];
+        } else if (Config.TypeOfResolution == ResolutionType.inverted) {
+            from = answer;
+            target = getNearestTonic(tonic, answer, true);
+        }else if (Config.TypeOfResolution == ResolutionType.fifth) {
+            from = answer;
+            target = answer - ((answer - tonic +7*12)%12) + 7;
+        } else if (Config.TypeOfResolution == ResolutionType.inverted2) {
+            from = getNearestTonic(tonic, answer, false);
+            target = answer;
             playToneAsyncPlay(answer, (answer + 7*12) % 12, 0, 0);
         } else {
-            currentTone = answer;
             from = answer;
-            target = (answer - tonicLower < tonicHigher - answer) ? tonicLower : tonicHigher;
+            target = getNearestTonic(tonic, answer, false);
         }
+        currentTone = from;
         inc = target < from ? -1 : +1;
         while ( true ) {
             if(
-                    Config.TypeOfResolution.ShouldResolve(Config.TypeOfScale,from - tonic,target - tonic,currentTone - tonic)
+                    Config.TypeOfResolution.ShouldResolveTone(Config.TypeOfScale, tonic, from, target, currentTone)
                     || (currentTone + 7*12) % 12 == (answer + 7*12) % 12
                     ) {
                 if(Config.InterleavedResolutions) {

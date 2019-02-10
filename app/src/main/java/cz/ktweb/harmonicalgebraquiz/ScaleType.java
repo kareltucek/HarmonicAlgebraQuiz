@@ -49,7 +49,7 @@ enum ScaleType {
 
     public static boolean PresentInScale(ScaleType tpe, int deg) {
         if(tpe == whole_tone) {
-            return deg % 2 == 0;
+            return (deg + 7*12) % 2 == 0;
         } else {
             int degInMajor = (deg + 7*12 + tpe.offsetWRTMajor) % 12;
             return majorResolvableTones[degInMajor];
@@ -126,7 +126,7 @@ enum ScaleType {
     }
 
     public int GetSharps(int tonic) {
-        int c_tonic = (tonic-Config.TypeOfScale.OffsetWRTMajor()) % 12;
+        int c_tonic = (tonic-Config.TypeOfScale.OffsetWRTMajor()+7*12) % 12;
         int sharpcount = ((c_tonic * 7) % 12);
         if(sharpcount > 6) {
             sharpcount = - 12 + sharpcount;
@@ -141,5 +141,17 @@ enum ScaleType {
     public String GetScaleName(int tonic) {
         return GetToneLabel(ScaleLabelType.tone_name, tonic, tonic) + " " + label;
 
+    }
+
+
+    public int AugFourthDirection() {
+        switch ( this ) {
+            case locrian:
+                return 1;
+            case lydian:
+                return -1;
+            default:
+                return 0;
+        }
     }
 }

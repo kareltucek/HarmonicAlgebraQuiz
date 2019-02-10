@@ -198,6 +198,27 @@
                         android:layout_height="wrap_content"
                         android:text="Repeat Failed Pairs" />
 
+                    <CheckBox
+                        android:id="@+id/noCadences"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="No Cadences" />
+
+                    <CheckBox
+                        android:id="@+id/augFouthUp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Resolve Aug Fourth Up" />
+
+                    <CheckBox
+                        android:id="@+id/noGiveUpResolve"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="No Resolve on Give Up" />
+
                 </LinearLayout>
 
                 <TextView

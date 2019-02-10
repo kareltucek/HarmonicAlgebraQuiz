@@ -101,6 +101,21 @@ public class Player implements MidiDriver.OnMidiStartListener{
         }
     }
 
+    public void startChordByTones(int tonic, int[] tones) {
+        for(int i = 0; i < tones.length; i++) {
+            startNote(tonic + tones[i], 50);
+            SystemClock.sleep(rnd.nextInt(30));
+        }
+    }
+
+
+    public void endAll() {
+
+        for(int i = 0; i < 128; i++){
+            stopNote(i);
+        }
+    }
+
     private void startNote(int note, int velocity) {
 
         // Construct a note ON message for the middle C at maximum velocity on channel 1:

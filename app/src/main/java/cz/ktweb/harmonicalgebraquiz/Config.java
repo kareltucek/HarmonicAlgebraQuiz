@@ -49,14 +49,18 @@ public class Config {
     //Ear trainer
     public static boolean TrickyQuestions = true;
     public static int TrickyOffset = 8;
+    public static int SecondTrickyOffset = 100;
     public static boolean EarIntervalLabels = false;
     public static boolean ChromaticMode = false;
     public static boolean Resolving = true;
     public static boolean LimitedIntervals = true;
     public static boolean InterleavedResolutions = false;
+    public static boolean NoCadences = false;
+    public static boolean AugFourthUp = false;
+    public static boolean NoGiveupResolve = true;
     public static ScaleType TypeOfScale = ScaleType.major;
-    public static ResolutionType TypeOfResolution = ResolutionType.basic;
-    public static RestrictionType TypeOfRestriction = RestrictionType.octave1;
+    public static ResolutionType TypeOfResolution = ResolutionType.hybrid_whole_tone;
+    public static RestrictionType TypeOfRestriction = RestrictionType.basic1;
     public static QuestionPlayType TypeOfQuestion = QuestionPlayType.play_last;
     public static KeyType TypeOfKey = KeyType.c;
     public static LayoutType TypeOfLayout = LayoutType.relative_native;

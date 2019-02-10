@@ -2,20 +2,22 @@ package cz.ktweb.harmonicalgebraquiz;
 
 
 enum SetCountType {
-    c_100(0, 100, 100, "100 questions"),
-    c_100_20(1, 100, 20, "100 questions, 20/set"),
-    c_100_5(2, 100, 5, "100 questions, 5/set"),
-    c_20(3, 20, 20, "20 questions"),
-    c_20_5(4, 20, 5, "20 questions, 5/set"),
-    c_20_1(5, 20, 1, "20 questions, 1/set"),
+    c_500(500, 500, "500 questions"),
+    c_500_50(500, 50, "500 questions, 50/set"),
+    c_100(100, 100, "100 questions"),
+    c_100_20(100, 20, "100 questions, 20/set"),
+    c_100_5(100, 5, "100 questions, 5/set"),
+    c_20(20, 20, "20 questions"),
+    c_20_5(20, 5, "20 questions, 5/set"),
+    c_20_1(20, 1, "20 questions, 1/set"),
     ;
 
     private final int value;
     private final int inQuiz;
     private final int inSet;
     private final String label;
-    private SetCountType(int value, int inQuiz, int inSet, String lab) {
-        this.value = value;
+    private SetCountType(int inQuiz, int inSet, String lab) {
+        this.value = this.ordinal();
         this.label = lab;
         this.inQuiz = inQuiz;
         this.inSet = inSet;
