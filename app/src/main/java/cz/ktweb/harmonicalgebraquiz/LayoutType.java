@@ -6,10 +6,14 @@ enum LayoutType {
     relative_native("Native layout"),
     piano_cmaj("Piano layout - C"),
     piano_shifted("Piano layout - Shifted"),
+    parallel_maj("Parallel major layout"),
+    parallel_min("Parallel minor layout"),
+    piano_parallel_maj("Piano layout - Parallel major"),
+    piano_parallel_min("Piano layout - Parallel minor"),
     linear("Linear"),
-    violin_1("Violin 1st pos layout"),
-    violin_3("Violin 3rd pos layout"),
-    violin_4("Violin 4th pos layout"),
+    violin_1("Fretboard in fifths - G"),
+    violin_3("Fretboard in fifths - C"),
+    violin_4("Fretboard in fifths - D"),
     ;
 
     private final int value;

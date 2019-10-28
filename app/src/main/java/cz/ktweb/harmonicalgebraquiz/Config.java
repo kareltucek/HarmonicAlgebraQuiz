@@ -49,7 +49,7 @@ public class Config {
     //Ear trainer
     public static boolean TrickyQuestions = true;
     public static int TrickyOffset = 8;
-    public static int SecondTrickyOffset = 100;
+    public static int SecondTrickyOffset = 50;
     public static boolean EarIntervalLabels = false;
     public static boolean ChromaticMode = false;
     public static boolean Resolving = true;
@@ -58,14 +58,18 @@ public class Config {
     public static boolean NoCadences = false;
     public static boolean AugFourthUp = false;
     public static boolean NoGiveupResolve = true;
+    public static boolean HideLabels = false; //should be refactored to full-featured label type (letters, numbers, static do-re-mi, movable do-re-mi, hidden, all-letters)
+    public static boolean ArpeggioChords = false;
+    public static boolean ArpeggioMarking = false;
     public static ScaleType TypeOfScale = ScaleType.major;
-    public static ResolutionType TypeOfResolution = ResolutionType.hybrid_whole_tone;
+    public static ResolutionType TypeOfResolution = ResolutionType.basic;
     public static RestrictionType TypeOfRestriction = RestrictionType.basic1;
     public static QuestionPlayType TypeOfQuestion = QuestionPlayType.play_last;
     public static KeyType TypeOfKey = KeyType.c;
-    public static LayoutType TypeOfLayout = LayoutType.relative_native;
+    public static LayoutType TypeOfLayout = LayoutType.piano_cmaj;
     public static SetCountType TypeOfSetCount = SetCountType.c_100;
-    public static TempoType TypeOfTempo = TempoType.andante_moderato;
+    public static TempoType TypeOfTempo = TempoType.moderato;
+    public static StimuliType TypeOfStimuli = StimuliType.tones;
 
 
     //Progression trainer
@@ -73,6 +77,6 @@ public class Config {
     public static ScaleLabelType ProgressionLabels = ScaleLabelType.chord_degree;
     public static KeyType ProgressionKey = KeyType.c;
     public static int EnableNextAfter = 10;
-    public static boolean NormalizedChords = true;;
+    public static boolean NormalizedChords = true;
     public static boolean FreeMode = false;
 }

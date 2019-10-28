@@ -16,6 +16,8 @@ enum ResolutionType {
     hybrid_whole_tone("Hybrid Major/Whole Tone"),
     last_current("Last - Current"),
     current_lats("Current - Last"),
+    fifth_lower("Lower Tonic/Fifth"),
+    fifth_upper("Upper Tonic/Fifth"),
     ;
 
     private final int value;

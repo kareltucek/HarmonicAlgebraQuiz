@@ -43,7 +43,7 @@ Let me kindly ask you to:
         At the end of training, the user should be able to confidently recognize degrees of a scale by ear. The learning process
         is designed to build up the ability by small steps without any prerequisites.
 
-<br><br>Application of this method may also be taken for an interesting scientific experiment, since it clearly shows
+<br><br>Application of this method may also be taken for an interesting experiment, since it clearly shows
         that there are classes of problems which are just as hard to learn for our brain as they are for artificial neural
         networks (which are currently limited by our incapability of incorporating abstraction into the learning process,
         therefore requiring large amounts of learning data).
@@ -68,12 +68,14 @@ Let me kindly ask you to:
           should end by the user reaching a steady 98%+ score.
 
           <ul>
-            <li> In the first phase the user associates a tone stimuli with the resolution pattern and some sensation. This creates
-             a new brain connection for each harmonic function of the basic Major scale.</li>
+            <li> In the first phase the user associates a tone stimuli with the resolution pattern. This creates
+             a new brain connection for each harmonic function of the basic Major scale. Also the brain will typically associate the tone/pattern
+             with some sensation (e.g., a sensation of being flat, sharp, squeezed, etc) - if you feel these sensations, simply try to remember them and enforce their association.</li>
             <li> In further phases, restrictions (like single-octave mode, cadences/resolutions) are dropped,
                 and the user\'s neural network is relearned so that it unlearns
                 undesired connections which were established in the first phase. First, dependence on octave should be eliminated, later
-                fixation on tonic and dependence on cadences and resolutions. </li>
+                fixation on tonic and dependence on cadences and resolutions. (There are some preconfigured levels which incrementally add new stimuli,
+                 but configuration of the concrete mode - e.g., resolution type or key - is up to you.) </li>
             <li> After mastering the Major context, the user should continue by learning chromatic tones in major context.
                This is vital to eliminate pattern dependence. Otherwise, the brain will
                mix up similar tone sequences in different scale types.
@@ -101,10 +103,10 @@ Let me kindly ask you to:
 
           For these reasons, we try to break the learning process down so that:
           <ul>
-          <li>All transitions are present evenly in the learning process.</li>
-          <li>Higher levels are designed so that they contain artificially increased portion of the new
+          <li>All transitions are present somewhat evenly in the learning process.</li>
+          <li>Higher levels are designed so that they contain artificially increased portion of new
               learning stimuli.</li>
-          <li>Levels are designed so that every new level contains at most 50 new transitions.</li>
+          <li>Levels are designed so that every new level contains reasonable amount of new transitions.</li>
           </ul>
 
           A bit of math:
@@ -115,8 +117,9 @@ Let me kindly ask you to:
           <li>Multi-octave chromatic scale contains 12*12*2=288 transitions. </li>
           <li>In order to break the above number down, we implement modes which alternate chromatics with non-chromatics
               and we furthermore split the problem into lower-half chromatics and upper-half chromatics. Each of these
-              modes contains 3*7*2=42 new transitions, and due to the deterministic alterntion, it plays
-               these 42 transitions only.</li>
+              modes contains 3*7*2*2=84 new transitions.</li>
+          <li>The remaining transitions are of type chromatic-to-chromatic. There is 5*5*2=50 of them. Learning these last 50 should be simple
+              when you confidently know the rest, since they correspond to "nice" intervals.</li>
           </ul>
 
         <h2>Implementation Differences</h2>
@@ -126,10 +129,9 @@ Let me kindly ask you to:
           we do not penalize "giveups" by lowering score, since making correct associations is much more important
           for the learning process than getting a good score via "wild guesses".</li>
           <li> We provide question modes containing replay of the last question so that the brain can
-           learn transition pairs directly. This way, the user is able to
-           learn to keep old reference frame without being affected by the "tonic-to-question" relation.</li>
-          <li> We implement "tricky questions", which intentionally repeats incorrectly inputted pairs, allowing for conscious learning
-          and fixing problems.</li>
+           learn transition pairs directly. </li>
+          <li> We implement repetition of inputted pairs, allowing for conscious learning
+          and for fixing problems.</li>
           </ul>
 
         <h2>Tips</h2>
@@ -140,31 +142,61 @@ Let me kindly ask you to:
           <li>By default, incorrect or gave-up questions are repeated again after a while within the same question set. Use this
               knowledge to build up correct associations. E.g., give up even if you know the correct answer but
               feel insufficiently confident about it.</li>
-          <li>Incorrect pairs are remembered only within one set. Therefore, use long sets (ideally the 500q one) if you have time for it.</li>
+          <li>Incorrect pairs are remembered only within one set. Therefore, use long sets if you have time for it.</li>
           <li>Think about the learning process. Think about which associations you are creating. If something does not work, try to
               figure out why, and fix it.</li>
           <li>Experiment with different modes and settings. Specific settings will help you overcome specific problems encountered
               during the learning process.</li>
-          <li>Variation in the learning process may speed up learning. </li>
+          <li>Variation in the learning process may speed up learning. Or slow it down if the variation is too big. </li>
           <li>Mastering the major context with resolutions is not sufficient to apply the learned abilities in practice.
-              You need to continue with the chromatic mode. You need to learn to keep context of the current key (despite
-              out-of-scale tones) and to switch to new keys at will.</li>
-          <li>After mastering the chromatic mode, you should continue by training with this app and your instrument. The question
+              You need to continue with the chromatic mode. Also, you need to learn to recognize the tones in mode without resolutions.</li>
+          <li>After mastering the app exercises, you should continue by training along this app with your instrument. The question
               type contains "continue" modes which will play question by question without any interaction so you can play along.</li>
           <li>Think about interferences. Typically, in resolution or cadence mode, the brain will associate tones with respect to the last tone
-              of resolution (tonic) or the last chord of cadence (again tonic), yet in practice the last played tone is not tonic. For this
+              which was played - typically tonic, yet in practice the last played tone is not tonic. For this
               purpose, we provide question modes which repeat the previous question after playing its cadence/resolution. This allows the
-              brain to learn to keep the key context with respect to the last question degree & interval.</li>
+              brain to learn to keep the key context also with respect to the last question degree & interval.</li>
           <li>Before starting an exercise, think about unwanted interferences or associations of that exercise.
               Typically, learning a mode which does not contain chromatic neighbours will lead your brain to
-              unifying these neighbours. It is very easy to learn your brain to mess up 7 with 7b, 6 with 6b,
-              5 with 5b, even 6b with 5b. Use such modes (such as wholetone or "(upper/both) chromatic") cautiously
-              so that it helps you solve your problems instead of creating new problems.</li>
+              unifying these neighbours.
+              It is very easy to learn your brain to mess up 7 with 7b, 6 with 6b, 5 with 5b, even 6b with 5b.
+              (For instance, learning major and minor context at the same time before learning the chromatic mode first may lead to this kind of issue.)  </li>
           <li>Be warned: The new brain algebra will interfere with your old one. Using this app may temporarily yet significantly reduce
-              your regular musical abilities and vice versa. You will have to learn how to connect the two into one.</li>
+              your regular musical abilities and vice versa.</li>
           <li>Take everything by small steps. Avoid learning incorrect associations at all costs.</li>
-          <li>Learning in C at early stages and with fixed piano C layout at later stages may help you build up either
-              absolute hearing, or at least simplify conscious context switches.</li>
+          <li>Learning in C at early stages and with fixed piano C layout in later stages may help you maintain some sort of absolute
+              reference frame (aka absolute hearing). It is recommendable to start learning in a single fixed key. Yet
+              mastering a level in a single key may take very long time since the brain is likely to create some wrong connections which
+              will not be easy to fix within the same exercise type.
+              When the progress slows down, it is recommendable to try switching to an easier level which however contains
+              the same stimuli (transitions) in *different* context. For instance, if you get stuck with chromatic C major,
+              exercising non-chromatic major/minor with random key and short sets may push you further.</li>
+          <li>There are multiple possible approaches how to learn full chromatic algebra within both minor/major contexts. In any case, the brain should
+              connect both the algebras into one on its own once you have managed both basic non-chromatic contexts and at least one chromatic context (I.e.,
+              your brain will start experiencing both sensations at the same time, and later these two sensations become one):
+              <ul>
+                <li>\&nbsp\&nbsp First learn full chromatic major context. Then start again with simple non-chromatic minor and continue to minor chromatics.
+                The downside is that mastering chromatic context without knowing minor context may be difficult.</li>
+                <li>\&nbsp\&nbsp First learn non-chromatic major and non-chromatic minor. Then start with major (or minor) chromatics. In this case, brain tends
+                to mess up minor degrees with major degrees. Sorting things out may be difficult and time-demanding.</li>
+              </ul>
+          </li>
+          <li>You should distinguish the following orientation points:
+              <ul>
+                <li>\&nbsp\&nbsp Tonic. Obviously.</li>
+                <li>\&nbsp\&nbsp Dominant (Fifth). It is often used in a similar fashion as tonic - tunes start there, and pendle around. It is easy to
+                    mistake for tonic.</li>
+                <li>\&nbsp\&nbsp Halfsteps below Subdominant (Fourth) and below tonic (within major context). Major scale may be seen as divided into two similar segments -
+                    tonic-to-subdominant and dominant-to-tonic. The halfstep is a very distinct orientation point within this division.</li>
+                <li>\&nbsp\&nbsp Third distinct section of a scale is the tonic-to-dominant section. Our resolutions resolve dominant
+                    upwards, but you will often meet it "resolved" downwards in actual music.
+                <li>\&nbsp\&nbsp Supertonic (Second). Tunes very often stop one step above tonic in contexts which correspond to tonic. Do not let yourself get confused by this. </li>
+              </ul>
+          </li>
+          <li>Notice chord modes in the advanced settings. These provide basically the same functionality as the progression trainer.
+              Restriction type provides some settings specifically for this mode (e.g., all\dim mode, 1/4/5 mode). Also, we recommend to turn off
+              the resolutions since we do not see any sense in them in the harmonic context.
+          </li>
           </ul>
 
 
@@ -252,10 +284,10 @@ Let me kindly ask you to:
   </ul>
 
   If we take the discussed pattern, we get major scale. If we take the same pattern, but begin at its sixth position, we get a minor scale - a
-  scale on exactly same tones as the major scale.
+  scale on exactly same tones as the major scale. If we get some other degree, we get other scales, generally called church mods.
 
   <h2>Creating new scales</h2>
-  Furthermore, if we take an existing major scale, we can create a new one by taking its fifth degree as a tonic, and applying a sharp on its third position.
+  Furthermore, if we take an existing major scale, we can create a new one by taking its fifth degree as a tonic, and applying a sharp on its seventh position.
   Alternatively, we can do the inverse - starting at the fourth degree and adding a flat to the seventh degree.
 
     <h2>The Circle of Fifths</h2>

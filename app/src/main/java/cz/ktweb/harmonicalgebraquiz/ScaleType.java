@@ -1,24 +1,31 @@
 package cz.ktweb.harmonicalgebraquiz;
 
 
+import android.util.Log;
+
+import java.util.Random;
+
 enum ScaleType {
-    major(0, 0, "Major"),
-    minor(1, 9, "Minor"),
-    whole_tone(2, 0, "Whole tone"),
-    aiolian(3, 9, "Aiolian"),
-    locrian(4, 11, "Locrian"),
-    ionian(5, 0, "Ionian"),
-    dorian(6, 2, "Dorian"),
-    phrygian(7, 4, "Phrygian"),
-    lydian(8, 5, "Lydian"),
-    mixolydian(9, 7, "Mixolydian")
+    major(0, "Major"),
+    minor(9, "Minor"),
+    random_min_maj(0, "Random Major/Minor"),
+    whole_tone(0, "Whole Tone"),
+    aiolian(9, "Aiolian"),
+    locrian(11, "Locrian"),
+    ionian(0, "Ionian"),
+    dorian(2, "Dorian"),
+    phrygian(4, "Phrygian"),
+    lydian(5, "Lydian"),
+    mixolydian(7, "Mixolydian"),
+    random(0, "Random Mod")
     ;
 
     private final int value;
     private final int offsetWRTMajor;
     private final String label;
-    private ScaleType(int value, int offset, String lab) {
-        this.value = value;
+    private static Random rnd = new Random();
+    private ScaleType(int offset, String lab) {
+        this.value = this.ordinal();
         this.label = lab;
         this.offsetWRTMajor = offset;
     }
@@ -36,6 +43,42 @@ enum ScaleType {
         }
         return major;
     }
+
+    public ScaleType ResolveRandomModes() {
+        switch(this) {
+            case random:
+                switch(rnd.nextInt(7)) {
+                    case 0:
+                        return aiolian;
+                    case 1:
+                        return locrian;
+                    case 2:
+                        return ionian;
+                    case 3:
+                        return dorian;
+                    case 4:
+                        return phrygian;
+                    case 5:
+                        return lydian;
+                    case 7:
+                        return mixolydian;
+                    default:
+                        return aiolian;
+                }
+            case random_min_maj:
+                switch(rnd.nextInt(2)) {
+                    case 0:
+                        return major;
+                    case 1:
+                        return minor;
+                    default:
+                        return major;
+                }
+            default:
+                return this;
+        }
+    }
+
     public static String[] GetLabelArray() {
         String[] res = new String[ScaleType.values().length];
         for(ScaleType type : ScaleType.values()) {
@@ -86,6 +129,67 @@ enum ScaleType {
         return res;
     }
 
+    /**
+     * This works in standard space of the scale, given by the tonic and tone.
+     * @param tonic
+     * @param fromTone
+     * @param count
+     * @param skip
+     * @return chord in degrees
+     */
+    public int[] ResolveChordInKey (int tonic, int fromTone, int count, int skip) {
+        int[] res = new int[count];
+        int filled = 0;
+        int atTone = 0;
+        int octave = fromTone - ((fromTone - tonic + 7*12) % 12);
+        for(int j = 0; filled < count; j++) {
+            int currentDegree = fromTone + j - tonic;
+            if(this.Contains(currentDegree)) {
+                if(atTone % 2 == 0) {
+                    res[(filled-skip+count)%count] = currentDegree + (filled-skip < 0 ? 12 : 0);
+                    filled++;
+                }
+                atTone++;
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     * E.g., n=4 in C magor, means fifth tone, result is 7
+     * @param n tone index, from zero
+     * @return
+     */
+    public int GetNthTone(int n) {
+        while(n < 0) {
+            n += 7;
+        }
+        for(int i = 0; i < 120; i++) {
+            if(n == 0 && this.Contains(i)) {
+                return i;
+            } else if (this.Contains(i)) {
+                n--;
+            }
+        }
+        return 0;
+    }
+
+    public int GetNthToneInKey(int tonic, int tone, int n) {
+        int offset = 0;
+        int step = n > 0 ? 1 : -1;
+        int relative = ((tone - tonic + 7*12) % 12);
+        for(int i = 0; i < 120; i++) {
+            if(n == 0 && this.Contains(relative + offset)) {
+                return tone + offset;
+            } else if (this.Contains(relative + offset)) {
+                n -= step;
+            }
+            offset += step;
+        }
+        return 0;
+    }
+
     public String GetDegreeLabel(ScaleLabelType type, int tonic, int degree) {
         return GetToneLabel(type, tonic, tonic+degree);
     }
@@ -126,7 +230,7 @@ enum ScaleType {
     }
 
     public int GetSharps(int tonic) {
-        int c_tonic = (tonic-Config.TypeOfScale.OffsetWRTMajor()+7*12) % 12;
+        int c_tonic = (tonic-this.OffsetWRTMajor()+7*12) % 12;
         int sharpcount = ((c_tonic * 7) % 12);
         if(sharpcount > 6) {
             sharpcount = - 12 + sharpcount;
@@ -141,6 +245,11 @@ enum ScaleType {
     public String GetScaleName(int tonic) {
         return GetToneLabel(ScaleLabelType.tone_name, tonic, tonic) + " " + label;
 
+    }
+
+
+    public int GetMajorTonic(int tonicAt) {
+        return (tonicAt - offsetWRTMajor + 7*12) % 12;
     }
 
 

@@ -9,6 +9,7 @@ import org.billthefarmer.mididriver.MidiDriver;
 import java.util.Random;
 
 public class Player implements MidiDriver.OnMidiStartListener{
+    private MainActivity parent;
 
     private Random rnd = new Random();
     private MidiDriver midiDriver;
@@ -19,6 +20,9 @@ public class Player implements MidiDriver.OnMidiStartListener{
     public static int offset = 0;
 
     public static int currentInstrument = 0;
+
+    public static int noteVelocity = 70;
+    public static int chordVelocity = 60;
 
     public static Object[] instruments = {
             //new Pair<>(0, "Grand Piano"),
@@ -43,6 +47,10 @@ public class Player implements MidiDriver.OnMidiStartListener{
 
     Player() {
         init();
+    }
+
+    public void setParent(MainActivity p) {
+        parent = p;
     }
 
     public void init() {
@@ -75,15 +83,15 @@ public class Player implements MidiDriver.OnMidiStartListener{
     }
 
     public void playNote(int note, int length) {
-        startNote(note, 70);
+        startNote(note, noteVelocity);
         SystemClock.sleep(length);
         stopNote(note);
     }
 
     public void playChord(int note, boolean major, int duration) {
         startNote(note, 50);
-        startNote(note + (major ? 4 : 3),50);
-        startNote(note + 7, 50);
+        startNote(note + (major ? 4 : 3), chordVelocity);
+        startNote(note + 7, chordVelocity);
         SystemClock.sleep(duration);
         stopNote(note);
         stopNote(note + (major ? 4 : 3));
@@ -91,11 +99,22 @@ public class Player implements MidiDriver.OnMidiStartListener{
     }
 
     public void playChordByTones(int tonic, int[] tones, int duration) {
-        for(int i = 0; i < tones.length; i++) {
-            startNote(tonic + tones[i], 50);
-            SystemClock.sleep(rnd.nextInt(30));
+        if(Config.ArpeggioChords) {
+            duration /= 2;
         }
-        SystemClock.sleep(duration);
+        for(int i = 0; i < tones.length; i++) {
+            startNote(tonic + tones[i], chordVelocity);
+            if(Config.ArpeggioChords) {
+                parent.markChordToneStart(tonic + tones[i]);
+                SystemClock.sleep(duration);
+            } else {
+                SystemClock.sleep(rnd.nextInt(30));
+            }
+        }
+        SystemClock.sleep(duration);;
+        if(Config.ArpeggioChords) {
+            parent.markChordToneReset();
+        }
         for(int i = 0; i < tones.length; i++) {
             stopNote(tonic + tones[i]);
         }
@@ -103,7 +122,7 @@ public class Player implements MidiDriver.OnMidiStartListener{
 
     public void startChordByTones(int tonic, int[] tones) {
         for(int i = 0; i < tones.length; i++) {
-            startNote(tonic + tones[i], 50);
+            startNote(tonic + tones[i], chordVelocity);
             SystemClock.sleep(rnd.nextInt(30));
         }
     }
@@ -132,6 +151,10 @@ public class Player implements MidiDriver.OnMidiStartListener{
 
     }
 
+    public void StartNote(int note) {
+        startNote(note, 70);
+    }
+
     private void stopNote(int note) {
 
         // Construct a note OFF message for the middle C at minimum velocity on channel 1:
@@ -143,6 +166,10 @@ public class Player implements MidiDriver.OnMidiStartListener{
         // Send the MIDI event to the synthesizer.
         midiDriver.write(event);
 
+    }
+
+    public void StopNote(int note) {
+        stopNote(note);
     }
 
     private void sendInstrumentMsg() {

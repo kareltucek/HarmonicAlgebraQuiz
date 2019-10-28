@@ -1,7 +1,6 @@
 package cz.ktweb.harmonicalgebraquiz;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -26,6 +25,7 @@ public class MenuEarActivity extends AppCompatActivity {
         setupDropdownBox(R.id.layoutType);
         setupDropdownBox(R.id.setCountType);
         setupDropdownBox(R.id.tempoType);
+        setupDropdownBox(R.id.stimuliType);
 
         setupCheckboxes();
     }
@@ -127,6 +127,36 @@ public class MenuEarActivity extends AppCompatActivity {
                 Config.NoGiveupResolve = isChecked;
             }
         });
+        checkbox = (CheckBox)findViewById(R.id.hideLabels);
+        checkbox.setChecked(Config.HideLabels);
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                Config.HideLabels = isChecked;
+            }
+        });
+        checkbox = (CheckBox)findViewById(R.id.arpeggioChords);
+        checkbox.setChecked(Config.ArpeggioChords);
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                Config.ArpeggioChords = isChecked;
+            }
+        });
+        checkbox = (CheckBox)findViewById(R.id.arpeggioMarking);
+        checkbox.setChecked(Config.ArpeggioMarking);
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                Config.ArpeggioMarking = isChecked;
+            }
+        });
     }
 
     public void onClickEarQuiz(View v) {
@@ -167,6 +197,21 @@ public class MenuEarActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    public void updateResolving() {
+        if(Config.TypeOfStimuli != StimuliType.tones && Config.TypeOfStimuli != StimuliType.accompanied_tones &&  Config.TypeOfStimuli != StimuliType.accompanied_tones_inversion) {
+            ((CheckBox) findViewById(R.id.resolving)).setChecked(false);
+            Config.Resolving = false;
+        }
+
+    }
+
+    public void updateChromaticState() {
+        boolean checked = Config.TypeOfRestriction.RequiresChromatic() &&  Config.TypeOfStimuli == StimuliType.tones;
+        boolean active = !Config.TypeOfRestriction.BansChromatic() && !Config.TypeOfRestriction.RequiresChromatic() && Config.TypeOfStimuli == StimuliType.tones;
+        ((CheckBox)findViewById(R.id.chromatics)).setChecked(checked);
+        ((CheckBox)findViewById(R.id.chromatics)).setEnabled(active);
+    }
+
     public void updateSpinner(int id) {;
         int value = 0;
         if(id == R.id.resolutionType) {
@@ -192,6 +237,9 @@ public class MenuEarActivity extends AppCompatActivity {
         }
         if(id == R.id.tempoType) {
             value = Config.TypeOfTempo.Position();
+        }
+        if(id == R.id.stimuliType) {
+            value = Config.TypeOfStimuli.Position();
         }
         final Spinner dynamicSpinner = (Spinner) findViewById(id);
         dynamicSpinner.setSelection(value);
@@ -225,6 +273,9 @@ public class MenuEarActivity extends AppCompatActivity {
         if(id == R.id.tempoType) {
             labels = Config.TypeOfTempo.GetLabelArray();
         }
+        if(id == R.id.stimuliType) {
+            labels = Config.TypeOfStimuli.GetLabelArray();
+        }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, labels);
@@ -244,13 +295,7 @@ public class MenuEarActivity extends AppCompatActivity {
                 }
                 if(parent.getId() == R.id.restrictionType) {
                     Config.TypeOfRestriction = RestrictionType.ByValue(position);
-                    if(Config.TypeOfRestriction.BansChromatic() || Config.TypeOfRestriction.RequiresChromatic()) {
-                        ((CheckBox)findViewById(R.id.chromatics)).setChecked(Config.TypeOfRestriction.RequiresChromatic());
-                        ((CheckBox)findViewById(R.id.chromatics)).setEnabled(false);
-                    } else {
-                        ((CheckBox)findViewById(R.id.chromatics)).setChecked(Config.ChromaticMode);
-                        ((CheckBox)findViewById(R.id.chromatics)).setEnabled(true);
-                    }
+                    updateChromaticState();
                 }
                 if(parent.getId() == R.id.questionType) {
                     Config.TypeOfQuestion = QuestionPlayType.ByValue(position);
@@ -266,6 +311,11 @@ public class MenuEarActivity extends AppCompatActivity {
                 }
                 if(parent.getId() == R.id.tempoType) {
                     Config.TypeOfTempo = TempoType.ByValue(position);
+                }
+                if(parent.getId() == R.id.stimuliType) {
+                    Config.TypeOfStimuli = StimuliType.ByValue(position);
+                    updateChromaticState();
+                    updateResolving();
                 }
             }
 

@@ -64,6 +64,34 @@
                     android:layout_weight="1"
                     android:text="Chromatics" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingLeft="16dp"
+                    android:visibility="gone">
+
+                    <CheckBox
+                        android:id="@+id/lower_chromatics"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Lower Half" />
+
+                    <CheckBox
+                        android:id="@+id/upper_chromatics2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Upper Half" />
+
+                    <CheckBox
+                        android:id="@+id/alternated_chromatics"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Alternated Mode" />
+
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/textView5"
                     android:layout_width="match_parent"
@@ -174,6 +202,12 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
 
+                    <Spinner
+                        android:id="@+id/stimuliType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
                     <CheckBox
                         android:id="@+id/limitedIntervals"
                         android:layout_width="match_parent"
@@ -218,6 +252,27 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="No Resolve on Give Up" />
+
+                    <CheckBox
+                        android:id="@+id/hideLabels"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Hide Labels" />
+
+                    <CheckBox
+                        android:id="@+id/arpeggioChords"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Arpeggio chords" />
+
+                    <CheckBox
+                        android:id="@+id/arpeggioMarking"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Arpeggio chord marking" />
 
                 </LinearLayout>
 
