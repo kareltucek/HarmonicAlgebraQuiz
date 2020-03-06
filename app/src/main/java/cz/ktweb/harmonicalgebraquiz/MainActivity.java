@@ -1,5 +1,7 @@
 package cz.ktweb.harmonicalgebraquiz;
 
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Handler;
@@ -156,7 +158,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     }
 
     void tuneButtonsSync(final int tonicAt) {
-        switch(Config.TypeOfLayout) {
+        switch(Cfg.c.TypeOfLayout) {
             case relative_native:
                 addButtonsPiano2(tonicAt, 0, CurrentScaleType, true);
                 break;
@@ -208,7 +210,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     }
 
     void addButtons() {
-        if(Config.QType == QuizType.KeyQuiz && Config.InvertedMode) {
+        if(Cfg.c.QType == QuizType.KeyQuiz && Cfg.c.InvertedMode) {
             addButtonsFlatSharp();
         } else {
             addButtonsPiano();
@@ -219,21 +221,23 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         setContentView(R.layout.activity_main);
         p.setParent(this);
+
 
         CurrentSet = 0;
         addButtons();
         newSet();
         UpdateQuestion();
 
-        setButtonVisibility(R.id.cadence, Config.QType == EarQuiz);
-        setButtonVisibility(R.id.repeat, Config.QType == EarQuiz);
-        setButtonVisibility(R.id.repeatLast, Config.QType == EarQuiz);
+        setButtonVisibility(R.id.cadence, Cfg.c.QType == EarQuiz);
+        setButtonVisibility(R.id.repeat, Cfg.c.QType == EarQuiz);
+        setButtonVisibility(R.id.repeatLast, Cfg.c.QType == EarQuiz);
 
 
-        ((TextView)findViewById(R.id.correct)).setTextColor(Config.Green);
-        ((TextView)findViewById(R.id.wrooong)).setTextColor(Config.Red);
+        ((TextView)findViewById(R.id.correct)).setTextColor(Cfg.c.Green);
+        ((TextView)findViewById(R.id.wrooong)).setTextColor(Cfg.c.Red);
 
         if(playThread == null) {
             playThread = new HandlerThread("PlayThread");
@@ -314,7 +318,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
 
     int HighlightTone = -1;
 
-    ScaleType CurrentScaleType = Config.TypeOfScale;
+    ScaleType CurrentScaleType = Cfg.c.TypeOfScale;
 
     int[] generatePermutation(int size) {
         int[] arr = new int[size];
@@ -364,28 +368,28 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
 
     void generateQuestion() {
         CurrentSet++;
-        if(CurrentSet > Config.Sets) {
+        if(CurrentSet > Cfg.c.Sets) {
             Finish();
         }
-        if(Config.QType == QuizType.AlgebraQuiz) {
+        if(Cfg.c.QType == QuizType.AlgebraQuiz) {
             generateAlgebraQuestion();
         }
-        else if (Config.QType == QuizType.KeyQuiz){
+        else if (Cfg.c.QType == QuizType.KeyQuiz){
             generateSigQuestion();
-        } else if (Config.QType == EarQuiz){
+        } else if (Cfg.c.QType == EarQuiz){
             generateEarQuestion();
         }
     }
 
     void generateSigQuestion() {
-        int setSize = Config.Difficulty * 2 + 1;
+        int setSize = Cfg.c.Difficulty * 2 + 1;
         setQuestionCount(setSize*2);
         int[] flipped = new int[setSize];
         for(int j = 0; j < 2; j++) {
             int[] perm = generatePermutation(setSize);
             for(int i = 0; i < setSize; i++) {
                 int type = j;
-                if (Config.InvertedMode && Config.ShuffleInvertedSigMode) {
+                if (Cfg.c.InvertedMode && Cfg.c.ShuffleInvertedSigMode) {
                     if(type == 0) {
                         flipped[i] = rnd.nextInt(2);
                         type = flipped[i];
@@ -394,11 +398,11 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                     }
                 }
                 int q = j*setSize + i;
-                int keyPos = Center-Config.Difficulty + perm[i];
+                int keyPos = Center-Cfg.c.Difficulty + perm[i];
                 int sharps = keyPos - Center;
                 TonicIds[q] = -1;
                 TonicTypes[q] = 0;
-                if(Config.InvertedMode) {
+                if(Cfg.c.InvertedMode) {
                     LabelTypes[q] = SimpleLabelType.flatsharp;
                     TonicString[q] = "";
                     if(sharps >= 0) {
@@ -426,19 +430,19 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
 
     void generateAlgebraQuestion(){
         int setSize = Questions[0].length;
-        setQuestionCount(Config.Passes*setSize);
+        setQuestionCount(Cfg.c.Passes*setSize);
         int type = rnd.nextInt(2);
-        int tonicPosition = rnd.nextInt(1+2*Config.Difficulty) + Center - Config.Difficulty;
+        int tonicPosition = rnd.nextInt(1+2*Cfg.c.Difficulty) + Center - Cfg.c.Difficulty;
         int tonic = decodeKeyFromIdx(type, tonicPosition);
         int[] perm = new int[QuestionCount];
-        for(int i = 0; i < Config.Passes; i++) {
+        for(int i = 0; i < Cfg.c.Passes; i++) {
             int[] p = generatePermutation(setSize);
             for(int j = 0; j < setSize; j++) {
                 perm[i*setSize+j] = p[j];
             }
         }
         for(int i = 0; i < perm.length; i++) {
-            if(Config.InvertedMode) {
+            if(Cfg.c.InvertedMode) {
                 TonicIds[i] = tonic;
                 TonicTypes[i] = type;
                 TonicString[i] = Questions[type][5] + " = " + FifthCircle[type][tonicPosition];
@@ -458,18 +462,18 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     }
 
     void generateEarQuestion(){
-        int setSize = Config.EarSetSize;
+        int setSize = Cfg.c.EarSetSize;
         Pair<Integer, ScaleType> lastKey = TonicIds.length == 0 ? new Pair(-1, CurrentScaleType) : new Pair(TonicIds[0], CurrentScaleType); //needs to be set before setting QC
         setQuestionCount(setSize);
-        if(Config.TypeOfRestriction.RequiresChromatic()) {
-            Config.ChromaticMode = true; //otherwise learning mode would contain empty set
+        if(Cfg.c.TypeOfRestriction.RequiresChromatic()) {
+            Cfg.c.ChromaticMode = true; //otherwise learning mode would contain empty set
         }
-        if(Config.TypeOfRestriction.BansChromatic()) {
-            Config.ChromaticMode = false;
+        if(Cfg.c.TypeOfRestriction.BansChromatic()) {
+            Cfg.c.ChromaticMode = false;
         }
         Pair<Integer, ScaleType> key = lastKey;
         for(int i = 0; i < 10 && lastKey.equals(key); i++) {
-            key = Config.TypeOfKey.SelectScale(Config.TypeOfScale);
+            key = Cfg.c.TypeOfKey.SelectScale(Cfg.c.TypeOfScale);
         }
         CurrentScaleType = key.second;
         int actualTonic = key.first.intValue();
@@ -480,17 +484,17 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             int deg;
             int tone;
             do {
-                int range = Config.TypeOfRestriction.To() - Config.TypeOfRestriction.From() + 1;
-                deg = Config.TypeOfRestriction.From() + rnd.nextInt(range) + (Config.TypeOfRestriction.Absolute() ? -actualTonic : 0);
+                int range = Cfg.c.TypeOfRestriction.To() - Cfg.c.TypeOfRestriction.From() + 1;
+                deg = Cfg.c.TypeOfRestriction.From() + rnd.nextInt(range) + (Cfg.c.TypeOfRestriction.Absolute() ? -actualTonic : 0);
                 tone = deg + actualTonic;
             } while (
                             (i > 0 && AnswersOctaved[i-1] == tone)
                         ||
-                                    (!CurrentScaleType.Contains(deg) && !Config.ChromaticMode)
+                                    (!CurrentScaleType.Contains(deg) && !Cfg.c.ChromaticMode)
                         ||
-                                    (!Config.TypeOfRestriction.Allows(CurrentScaleType, i, actualTonic, tone))
+                                    (!Cfg.c.TypeOfRestriction.Allows(CurrentScaleType, i, actualTonic, tone))
                         ||
-                            (i > 0 && Config.LimitedIntervals && Math.abs(AnswersOctaved[i-1] - tone) > 12)
+                            (i > 0 && Cfg.c.LimitedIntervals && Math.abs(AnswersOctaved[i-1] - tone) > 12)
                     );
             TonicIds[i] = actualTonic;
             TonicTypes[i] = 1;
@@ -571,7 +575,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 setText(R.id.correct, "" + Correct);
                 setText(R.id.wrooong, "" + Wrong);
                 setText(R.id.currentQ, "" + ((CurrentSet-1) * QuestionCount + CurrentQuestion));
-                setText(R.id.qCount, "" + (Config.Sets * QuestionCount));
+                setText(R.id.qCount, "" + (Cfg.c.Sets * QuestionCount));
                 WasCorrect = true;
                 WasWrong = false;
             }
@@ -585,8 +589,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     }
 
     String determineLabel(int tone) {
-        if(Config.InvertedMode) {
-            if(Config.QType == QuizType.AlgebraQuiz || Config.QType == EarQuiz) {
+        if(Cfg.c.InvertedMode) {
+            if(Cfg.c.QType == QuizType.AlgebraQuiz || Cfg.c.QType == EarQuiz) {
                 int majorTonic = TonicTypes[CurrentQuestion] == 1 ? TonicIds[CurrentQuestion] : (TonicIds[CurrentQuestion] + 3) % 12;
                 int degree = (tone - majorTonic + 7 * 12) % 12;
                 return LabelStore.GetDegreeLabel(SimpleLabelType.major_tsd, degree);
@@ -599,10 +603,10 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             }
         }
         else {
-            if (Config.QType == EarQuiz && Config.HideLabels) {
+            if (Cfg.c.QType == EarQuiz && Cfg.c.HideLabels) {
                 return "";
             }
-            else if (Config.QType == EarQuiz && Config.EarIntervalLabels && CurrentQuestion > 0) {
+            else if (Cfg.c.QType == EarQuiz && Cfg.c.EarIntervalLabels && CurrentQuestion > 0) {
                 int difference = AnswersOctaved[CurrentQuestion] - AnswersOctaved[CurrentQuestion-1];
                 if(difference >= 0) {
                     difference = (tone - AnswersOctaved[CurrentQuestion-1] + 7*12) % 12;
@@ -611,8 +615,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                     difference = (AnswersOctaved[CurrentQuestion-1] - tone + 7*12) % 12;
                     return (difference == 0 ? "" : "-") + LabelStore.GetDegreeLabel(SimpleLabelType.interval, difference);
                 }
-            } else if (Config.QType == EarQuiz) {
-                switch(Config.TypeOfStimuli) {
+            } else if (Cfg.c.QType == EarQuiz) {
+                switch(Cfg.c.TypeOfStimuli) {
                     case chord:
                     case chord_inversion:
                         return CurrentScaleType.GetToneLabel(ScaleLabelType.chord_name, TonicIds[CurrentQuestion], tone);
@@ -642,7 +646,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         int preview = tone == currentNotePreview % 12 ? 10 : 0;
         int dark = black + preview;
 
-        b.getBackground().setColorFilter(MathUtils.rgb(Config.bgRed -g - dark,Config.bgGreen - r - dark,Config.bgBlue - r - g - dark), PorterDuff.Mode.MULTIPLY);
+        b.getBackground().setColorFilter(MathUtils.rgb(Cfg.c.bgRed -g - dark,Cfg.c.bgGreen - r - dark,Cfg.c.bgBlue - r - g - dark), PorterDuff.Mode.MULTIPLY);
         if(CurrentQuestion < QuestionCount) {
             b.setText(determineLabel(tone));
         }
@@ -654,25 +658,25 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             return;
         }
         if(right == wrong) {
-            if(c+Config.TrickyOffset < QuestionCount && !RepeatedMistake[c + Config.TrickyOffset]) {
-                setupTrickyQuestionAt(c + Config.TrickyOffset, previous, right);
+            if(c+Cfg.c.TrickyOffset < QuestionCount && !RepeatedMistake[c + Cfg.c.TrickyOffset]) {
+                setupTrickyQuestionAt(c + Cfg.c.TrickyOffset, previous, right);
             }
-            setupTrickyQuestionAt(c + Config.TrickyOffset * 2, previous, right);
-            setupTrickyQuestionAt(c + Config.SecondTrickyOffset, previous, right);
+            setupTrickyQuestionAt(c + Cfg.c.TrickyOffset * 2, previous, right);
+            setupTrickyQuestionAt(c + Cfg.c.SecondTrickyOffset, previous, right);
         } else {
             if(rnd.nextBoolean()) {
-                setupTrickyQuestionAt(c + Config.TrickyOffset, previous, right);
-                setupTrickyQuestionAt(c + Config.TrickyOffset * 2, previous, wrong);
+                setupTrickyQuestionAt(c + Cfg.c.TrickyOffset, previous, right);
+                setupTrickyQuestionAt(c + Cfg.c.TrickyOffset * 2, previous, wrong);
             } else {
-                setupTrickyQuestionAt(c + Config.TrickyOffset, previous, wrong);
-                setupTrickyQuestionAt(c + Config.TrickyOffset * 2, previous, right);
+                setupTrickyQuestionAt(c + Cfg.c.TrickyOffset, previous, wrong);
+                setupTrickyQuestionAt(c + Cfg.c.TrickyOffset * 2, previous, right);
             }
             if(rnd.nextBoolean()) {
-                setupTrickyQuestionAt(c + Config.SecondTrickyOffset, previous, right);
-                setupTrickyQuestionAt(c + Config.SecondTrickyOffset + Config.TrickyOffset, previous, wrong);
+                setupTrickyQuestionAt(c + Cfg.c.SecondTrickyOffset, previous, right);
+                setupTrickyQuestionAt(c + Cfg.c.SecondTrickyOffset + Cfg.c.TrickyOffset, previous, wrong);
             } else {
-                setupTrickyQuestionAt(c + Config.SecondTrickyOffset, previous, wrong);
-                setupTrickyQuestionAt(c + Config.SecondTrickyOffset + Config.TrickyOffset, previous, right);
+                setupTrickyQuestionAt(c + Cfg.c.SecondTrickyOffset, previous, wrong);
+                setupTrickyQuestionAt(c + Cfg.c.SecondTrickyOffset + Cfg.c.TrickyOffset, previous, right);
             }
         }
     }
@@ -719,7 +723,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             newSet();
         }
         UpdateQuestion();
-        if(Config.QType == EarQuiz) {
+        if(Cfg.c.QType == EarQuiz) {
             PlayQuestion(false);
         }
         questionChangeInProgress = false;
@@ -740,9 +744,9 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         clearAllButtonsAsync();
         int answer = (int)v.getTag(R.id.tone);
         if(answer == Answers[CurrentQuestion]) {
-            if(Config.QType == EarQuiz) {
+            if(Cfg.c.QType == EarQuiz) {
                 PlayAnswer();
-                if(!WasCorrect && Config.TrickyQuestions && CurrentQuestion > 0) {
+                if(!WasCorrect && Cfg.c.TrickyQuestions && CurrentQuestion > 0) {
                     setupTrickyQuestion(AnswersOctaved[CurrentQuestion-1], AnswersOctaved[CurrentQuestion], WasWrong ? guessWrong() : AnswersOctaved[CurrentQuestion]);
                 }
             }
@@ -772,32 +776,32 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         WasCorrect = false;
         giveUpButtons(R.id.whites);
         giveUpButtons(R.id.blacks);
-        if(Config.QType == EarQuiz && !Config.NoGiveupResolve) {
+        if(Cfg.c.QType == EarQuiz && !Cfg.c.NoGiveupResolve) {
             PlayResolution();
         }
     }
 
     public void Finish() {
         Intent i = new Intent(getApplicationContext(), ScoreActivity.class);
-        Config.LastScore = (100 * (1+Correct)) / (Correct+Wrong+1);
-        Config.LastScore2 = (100 * (1+Correct)) / (Answered+1);
+        Cfg.c.LastScore = (100 * (1+Correct)) / (Correct+Wrong+1);
+        Cfg.c.LastScore2 = (100 * (1+Correct)) / (Answered+1);
         stopped = true;
         startActivity(i);
     }
 
 
     public void PlayQuestion(boolean repeating) {
-        if((CurrentQuestion == 0 || Config.TypeOfQuestion.Cadence()) && !repeating) {
-            if(repeating || !Config.NoCadences) {
+        if((CurrentQuestion == 0 || Cfg.c.TypeOfQuestion.Cadence()) && !repeating) {
+            if(repeating || !Cfg.c.NoCadences) {
                 playCadenceAsyncPlay();
             }
         }
-        playToneAsyncPlay(TonicIds[CurrentQuestion], AnswersOctaved[CurrentQuestion], -1, Config.DelayBetweenTones, 0, false);
-        if(Config.TypeOfQuestion.Last2() && CurrentQuestion > 0) {
-             playToneAsyncPlay(TonicIds[CurrentQuestion-1], AnswersOctaved[CurrentQuestion-1], Answers[CurrentQuestion -1], Config.DelayBetweenTones, 0, false);
+        playToneAsyncPlay(TonicIds[CurrentQuestion], AnswersOctaved[CurrentQuestion], -1, Cfg.c.DelayBetweenTones, 0, false);
+        if(Cfg.c.TypeOfQuestion.Last2() && CurrentQuestion > 0) {
+             playToneAsyncPlay(TonicIds[CurrentQuestion-1], AnswersOctaved[CurrentQuestion-1], Answers[CurrentQuestion -1], Cfg.c.DelayBetweenTones, 0, false);
         }
-        if(Config.TypeOfQuestion.Next() && CurrentQuestion < QuestionCount - 1) {
-            playToneAsyncPlay(TonicIds[CurrentQuestion+1], AnswersOctaved[CurrentQuestion+1], -1, Config.DelayBetweenTones, 0, false);
+        if(Cfg.c.TypeOfQuestion.Next() && CurrentQuestion < QuestionCount - 1) {
+            playToneAsyncPlay(TonicIds[CurrentQuestion+1], AnswersOctaved[CurrentQuestion+1], -1, Cfg.c.DelayBetweenTones, 0, false);
         }
     }
 
@@ -809,7 +813,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 TonicIds[CurrentQuestion-offset],
                 AnswersOctaved[CurrentQuestion-offset],
                 (AnswersOctaved[CurrentQuestion-offset] + 7 * 12) % 12,
-                Config.DelayBetweenTones,
+                Cfg.c.DelayBetweenTones,
                 0,
                 false
         );
@@ -817,17 +821,17 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
 
     public void PlayAnswer() {
         int currentTone = AnswersOctaved[CurrentQuestion];
-        if(Config.Resolving) {
+        if(Cfg.c.Resolving) {
             PlayResolution();
         }
-        if(Config.TypeOfQuestion.Tonic()) {
+        if(Cfg.c.TypeOfQuestion.Tonic()) {
             playTonicAsyncPlay();
         }
         /*
-        if(Config.TypeOfQuestion.Last2()) {
+        if(Cfg.c.TypeOfQuestion.Last2()) {
             PlayQuestionLast(1);
         }*/
-        if(Config.TypeOfQuestion.Last()) {
+        if(Cfg.c.TypeOfQuestion.Last()) {
             PlayQuestionLast(0);
         }
     }
@@ -847,7 +851,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 case 1:
                     return inverted ?  tonicLower : tonicHigher;
                 default:
-                    return Config.AugFourthUp ^ inverted ? tonicHigher : tonicLower;
+                    return Cfg.c.AugFourthUp ^ inverted ? tonicHigher : tonicLower;
             }
         }
     }
@@ -864,26 +868,26 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         int tonicLower = answer - ((answer - tonic +7*12)%12);
         int tonicHigher = answer - ((answer - tonic +7*12)%12) + 12;
         int fifthNearest = tonicLower + 7;
-        if(Config.TypeOfResolution == ResolutionType.last_current && CurrentQuestion > 0) {
+        if(Cfg.c.TypeOfResolution == ResolutionType.last_current && CurrentQuestion > 0) {
             from = AnswersOctaved[CurrentQuestion-1];
             target = answer;
             playToneAsyncPlay(tonic, answer, (answer + 7*12) % 12, 0, 0, true);
-        } else if(Config.TypeOfResolution == ResolutionType.current_lats && CurrentQuestion > 0) {
+        } else if(Cfg.c.TypeOfResolution == ResolutionType.current_lats && CurrentQuestion > 0) {
             from = answer;
             target = AnswersOctaved[CurrentQuestion-1];
-        } else if (Config.TypeOfResolution == ResolutionType.inverted) {
+        } else if (Cfg.c.TypeOfResolution == ResolutionType.inverted) {
             from = answer;
             target = getNearestTonic(tonic, answer, true);
-        } else if (Config.TypeOfResolution == ResolutionType.fifth) {
+        } else if (Cfg.c.TypeOfResolution == ResolutionType.fifth) {
             from = answer;
             target = fifthNearest;
-        } else if (Config.TypeOfResolution == ResolutionType.fifth_lower) {
+        } else if (Cfg.c.TypeOfResolution == ResolutionType.fifth_lower) {
             from = answer;
             target = answer > fifthNearest ? fifthNearest : tonicLower;
-        } else if (Config.TypeOfResolution == ResolutionType.fifth_upper) {
+        } else if (Cfg.c.TypeOfResolution == ResolutionType.fifth_upper) {
             from = answer;
             target = answer < fifthNearest ? fifthNearest : tonicHigher;
-        } else if (Config.TypeOfResolution == ResolutionType.inverted2) {
+        } else if (Cfg.c.TypeOfResolution == ResolutionType.inverted2) {
             from = getNearestTonic(tonic, answer, false);
             target = answer;
             playToneAsyncPlay(tonic, answer, (answer + 7*12) % 12, 0, 0, true);
@@ -895,10 +899,10 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         inc = target < from ? -1 : +1;
         while ( true ) {
             if(
-                    Config.TypeOfResolution.ShouldResolveTone(CurrentScaleType, tonic, from, target, currentTone)
+                    Cfg.c.TypeOfResolution.ShouldResolveTone(CurrentScaleType, tonic, from, target, currentTone)
                     || (currentTone + 7*12) % 12 == (answer + 7*12) % 12
                     ) {
-                if(Config.InterleavedResolutions) {
+                if(Cfg.c.InterleavedResolutions) {
                     playTonicAsyncPlay();
                 }
                 playToneAsyncPlay(tonic, currentTone, (currentTone + 7*12) % 12, 0, 0, true);
@@ -915,9 +919,9 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         Runnable myRunnable = new Runnable() {
             @Override
             public void run() {
-                int length = 60000/Config.TypeOfTempo.Tempo();
+                int length = 60000/Cfg.c.TypeOfTempo.Tempo();
                 p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length);
-                SystemClock.sleep(Config.DelayBetweenTones);
+                SystemClock.sleep(Cfg.c.DelayBetweenTones);
                 playingActive--;
             }
         };
@@ -929,12 +933,12 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         Runnable myRunnable = new Runnable() {
             @Override
             public void run() {
-                int length = 60000/Config.TypeOfTempo.Tempo();
+                int length = 60000/Cfg.c.TypeOfTempo.Tempo();
                 p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length);
                 p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(4, 3), length);
                 p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(5, 3), length);
                 p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length);
-                SystemClock.sleep(Config.DelayBetweenTones);
+                SystemClock.sleep(Cfg.c.DelayBetweenTones);
                 playingActive--;
             }
         };
@@ -958,7 +962,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     int playStimuliLastQuestion = 0;
 
     public void playStimuliSync(int tonic, int tone, int length, int delay, Boolean resolving) {
-        switch(Config.TypeOfStimuli) {
+        switch(Cfg.c.TypeOfStimuli) {
             case tones:
                 p.playNote(tone, length);
                 break;
@@ -978,7 +982,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                                     tonic,
                                     CurrentScaleType.GetNthToneInKey(tonic, tone, playStimuliOffset),
                                     3,
-                                    Config.TypeOfStimuli == StimuliType.accompanied_tones ? 0 : playStimuliInversion
+                                    Cfg.c.TypeOfStimuli == StimuliType.accompanied_tones ? 0 : playStimuliInversion
                             ),
                             length
                     );
@@ -998,7 +1002,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     }
 
     public void playToneAsyncPlay(final int tonic, final int tone, final int highlight, final int dly1, final int dly2, final Boolean resolving) {
-        if(Config.QType == EarQuiz) {
+        if(Cfg.c.QType == EarQuiz) {
             playingActive++;
             Runnable myRunnable = new Runnable() {
                 @Override
@@ -1006,7 +1010,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                     HighlightTone = highlight;
                     clearAllButtonsAsync();
                     SystemClock.sleep(dly1);
-                    playStimuliSync(tonic, tone, 60000/Config.TypeOfTempo.Tempo(), dly1, resolving);
+                    playStimuliSync(tonic, tone, 60000/Cfg.c.TypeOfTempo.Tempo(), dly1, resolving);
                     SystemClock.sleep(dly2);
                     HighlightTone = -1;
                     clearAllButtonsAsync();
@@ -1019,14 +1023,14 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
 
 
     public void markChordToneStart(int tone) {
-        if(Config.ArpeggioChords && Config.ArpeggioMarking) {
+        if(Cfg.c.ArpeggioChords && Cfg.c.ArpeggioMarking) {
             HighlightTone = (tone + 7 * 12) % 12;
             clearAllButtonsAsync();
         }
     }
 
     public void markChordToneReset() {
-        if(Config.ArpeggioChords && Config.ArpeggioMarking) {
+        if(Cfg.c.ArpeggioChords && Cfg.c.ArpeggioMarking) {
             HighlightTone = -1;
             clearAllButtonsAsync();
         }
@@ -1034,7 +1038,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
 
 
     public void previewToneAsync(final int tone, final boolean start) {
-        if(Config.QType == EarQuiz) {
+        if(Cfg.c.QType == EarQuiz) {
             playingActive++;
             Runnable myRunnable = new Runnable() {
                 @Override
@@ -1066,7 +1070,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         if(stopped) {
             return;
         }
-        if(Config.TypeOfQuestion.Continuu()) {
+        if(Cfg.c.TypeOfQuestion.Continuu()) {
             Runnable myRunnable = new Runnable() {
                 @Override
                 public void run() {
@@ -1079,9 +1083,9 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                         Runnable myRunnable = new Runnable() {
                             @Override
                             public void run() {
-                                SystemClock.sleep(Config.DelayBetweenTones);
-                                if ( Config.TypeOfQuestion.Delay() > 0 ) {
-                                    SystemClock.sleep((long)(Config.NoteLength * Config.TypeOfQuestion.Delay()));
+                                SystemClock.sleep(Cfg.c.DelayBetweenTones);
+                                if ( Cfg.c.TypeOfQuestion.Delay() > 0 ) {
+                                    SystemClock.sleep((long)(Cfg.c.NoteLength * Cfg.c.TypeOfQuestion.Delay()));
                                 }
                                 Button b = findToneButton(AnswersOctaved[CurrentQuestion]);
                                 onClick(b);
@@ -1098,7 +1102,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     }
 
     public void startEarQuiz() {
-        if(Config.QType == EarQuiz) {
+        if(Cfg.c.QType == EarQuiz) {
             newInstrument();
             PlayQuestion(false);
             stopped = false;
@@ -1124,10 +1128,11 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     }
 
 
+
     @Override
     public void onBackPressed() {
         Intent i;
-        if(Config.QType == EarQuiz) {
+        if(Cfg.c.QType == EarQuiz) {
             i = new Intent(getApplicationContext(), MenuEarActivity.class);
         } else {
             i = new Intent(getApplicationContext(), MenuKeyActivity.class);
@@ -1148,7 +1153,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         if(super.onTouchEvent(e)) {
             return true;
         }
-        if(Config.QType != EarQuiz) {
+        if(Cfg.c.QType != EarQuiz) {
             return false;
         }
         gestureDetector.HandleEvent(e);

@@ -24,30 +24,30 @@ public class MenuKeyActivity extends AppCompatActivity {
 
 
     public void onClickHarmonicQuiz(View v) {
-        Config.QType = QuizType.AlgebraQuiz;
-        Config.InvertedMode = false;
-        Config.Sets = Config.SetsInFunctionQuiz;
+        Cfg.c.QType = QuizType.AlgebraQuiz;
+        Cfg.c.InvertedMode = false;
+        Cfg.c.Sets = Cfg.c.SetsInFunctionQuiz;
         startQuiz();
     }
 
     public void onClickSigQuiz(View v) {
-        Config.QType = QuizType.KeyQuiz;
-        Config.InvertedMode = false;
-        Config.Sets = Config.SetsInSigQuiz;
+        Cfg.c.QType = QuizType.KeyQuiz;
+        Cfg.c.InvertedMode = false;
+        Cfg.c.Sets = Cfg.c.SetsInSigQuiz;
         startQuiz();
     }
 
     public void onClickHarmonicQuizInv(View v) {
-        Config.QType = QuizType.AlgebraQuiz;
-        Config.InvertedMode = true;
-        Config.Sets = Config.SetsInFunctionQuiz;
+        Cfg.c.QType = QuizType.AlgebraQuiz;
+        Cfg.c.InvertedMode = true;
+        Cfg.c.Sets = Cfg.c.SetsInFunctionQuiz;
         startQuiz();
     }
 
     public void onClickSigQuizInv(View v) {
-        Config.QType = QuizType.KeyQuiz;
-        Config.InvertedMode = true;
-        Config.Sets = Config.SetsInSigQuiz;
+        Cfg.c.QType = QuizType.KeyQuiz;
+        Cfg.c.InvertedMode = true;
+        Cfg.c.Sets = Cfg.c.SetsInSigQuiz;
         startQuiz();
     }
 
@@ -73,20 +73,20 @@ public class MenuKeyActivity extends AppCompatActivity {
     }
 
     public void onClickDifficulty(View v) {
-        Config.Difficulty = (int)Integer.parseInt((String)v.getTag());
-        Config.Difficulty = Config.Difficulty > 7 || Config.Difficulty < 0 ? 7 : Config.Difficulty;
+        Cfg.c.Difficulty = (int)Integer.parseInt((String)v.getTag());
+        Cfg.c.Difficulty = Cfg.c.Difficulty > 7 || Cfg.c.Difficulty < 0 ? 7 : Cfg.c.Difficulty;
         highlightDifficulty();
     }
 
 
     public void onClickPasses(View v) {
-        Config.Passes = (int)Integer.parseInt((String)v.getTag());
+        Cfg.c.Passes = (int)Integer.parseInt((String)v.getTag());
         highlightDifficulty();
     }
 
 
     public void onClickInverted(View v) {
-        Config.InvertedMode = !Config.InvertedMode;
+        Cfg.c.InvertedMode = !Cfg.c.InvertedMode;
         highlightDifficulty();
     }
 
@@ -94,7 +94,7 @@ public class MenuKeyActivity extends AppCompatActivity {
         int r = false ? 50 : 0;
         int g = false ? 50 : 0;
         int dark = d ? 50 : 0;
-        b.getBackground().setColorFilter(MathUtils.rgb(Config.bgRed -g - dark,Config.bgGreen - r - dark,Config.bgBlue - r - g - dark), PorterDuff.Mode.MULTIPLY);
+        b.getBackground().setColorFilter(MathUtils.rgb(Cfg.c.bgRed -g - dark,Cfg.c.bgGreen - r - dark,Cfg.c.bgBlue - r - g - dark), PorterDuff.Mode.MULTIPLY);
     }
 
     public void highlightDifficulty() {
@@ -103,7 +103,7 @@ public class MenuKeyActivity extends AppCompatActivity {
         for (int i = 0; i < l.getChildCount(); i++) {
             View v = l.getChildAt(i);
             if (v instanceof Button) {
-                resetButtonColor((Button) v, Integer.parseInt((String)((Button)v).getTag()) == Config.Difficulty);
+                resetButtonColor((Button) v, Integer.parseInt((String)((Button)v).getTag()) == Cfg.c.Difficulty);
             }
         }
         l = (LinearLayout)findViewById(R.id.menu);
@@ -117,11 +117,11 @@ public class MenuKeyActivity extends AppCompatActivity {
         for (int i = 0; i < l.getChildCount(); i++) {
             View v = l.getChildAt(i);
             if (v instanceof Button) {
-                resetButtonColor((Button) v, Integer.parseInt((String)((Button)v).getTag()) == Config.Passes);
+                resetButtonColor((Button) v, Integer.parseInt((String)((Button)v).getTag()) == Cfg.c.Passes);
             }
         }
         Button b = (Button)findViewById(R.id.inverted);
-        resetButtonColor(b, Config.InvertedMode);
+        resetButtonColor(b, Cfg.c.InvertedMode);
     }
 
 }

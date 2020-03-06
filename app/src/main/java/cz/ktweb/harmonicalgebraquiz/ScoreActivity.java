@@ -14,13 +14,13 @@ public class ScoreActivity extends AppCompatActivity {
         setContentView(R.layout.activity_score);
 
         TextView tw = (TextView)findViewById(R.id.score);
-        tw.setText(" " + Config.LastScore + "%");
-        if(Config.LastScore > 90) {
-            tw.setTextColor(Config.Green);
-        } else if (Config.LastScore > 60) {
-            tw.setTextColor(Config.Orange);
+        tw.setText(" " + Cfg.c.LastScore + "%");
+        if(Cfg.c.LastScore > 90) {
+            tw.setTextColor(Cfg.c.Green);
+        } else if (Cfg.c.LastScore > 60) {
+            tw.setTextColor(Cfg.c.Orange);
         } else {
-            tw.setTextColor(Config.Red);
+            tw.setTextColor(Cfg.c.Red);
         }
     }
 
@@ -31,7 +31,7 @@ public class ScoreActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent i;
-        if(Config.QType == QuizType.EarQuiz) {
+        if(Cfg.c.QType == QuizType.EarQuiz) {
             i = new Intent(getApplicationContext(), MenuEarActivity.class);
         } else {
             i = new Intent(getApplicationContext(), MenuKeyActivity.class);

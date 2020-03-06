@@ -83,7 +83,7 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
     int Type = 0;
     int Tonic = 0;
     int Enabled = 2;
-    int NextEnabledAfter = Config.EnableNextAfter;
+    int NextEnabledAfter = Cfg.c.EnableNextAfter;
     int Question = 0;
 
     int GreenHighlight = -1;
@@ -91,8 +91,8 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
 
 
     String determineLabel(int idx) {
-        int type = Config.ProgressionScale == minor ? 0 : 1;
-        return Config.ProgressionScale.GetDegreeLabel(Config.ProgressionLabels, Tonic, algebras[type][idx].degree.Value());
+        int type = Cfg.c.ProgressionScale == minor ? 0 : 1;
+        return Cfg.c.ProgressionScale.GetDegreeLabel(Cfg.c.ProgressionLabels, Tonic, algebras[type][idx].degree.Value());
     }
 
     void setupButton(int id, int idx) {
@@ -117,7 +117,7 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         int g = GreenHighlight == idx ? 50 : 0;
         int dark = enablingOrder < Enabled ? 0 : -30;
         //b.setClickable(enablingOrder < Enabled);
-        b.getBackground().setColorFilter(MathUtils.rgb(Config.bgRed -g - dark,Config.bgGreen - r - dark,Config.bgBlue - r - g - dark), PorterDuff.Mode.MULTIPLY);
+        b.getBackground().setColorFilter(MathUtils.rgb(Cfg.c.bgRed -g - dark,Cfg.c.bgGreen - r - dark,Cfg.c.bgBlue - r - g - dark), PorterDuff.Mode.MULTIPLY);
         b.setText(determineLabel(idx));
     }
 
@@ -140,17 +140,17 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         }
         gameStarted = true;
         Enabled = 3;
-        NextEnabledAfter = Config.EnableNextAfter;
-        if(Config.ProgressionKey == KeyType.c) {
+        NextEnabledAfter = Cfg.c.EnableNextAfter;
+        if(Cfg.c.ProgressionKey == KeyType.c) {
             Tonic = 0;
         } else {
-            int diff = Config.ProgressionKey.Difficulty();
+            int diff = Cfg.c.ProgressionKey.Difficulty();
             int sharps = - diff + rnd.nextInt(2*diff + 1);
-            Tonic = Config.ProgressionScale.GetTonicFromSharps(sharps);
+            Tonic = Cfg.c.ProgressionScale.GetTonicFromSharps(sharps);
         }
-        Type = Config.ProgressionScale == ScaleType.minor ? 0 : 1;
+        Type = Cfg.c.ProgressionScale == ScaleType.minor ? 0 : 1;
         newInstrument();
-        if(!Config.FreeMode) {
+        if(!Cfg.c.FreeMode) {
             clearAllButtons();
             playQuestion(true);
         } else {
@@ -178,7 +178,7 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         GreenHighlight = -1;
         RedHighlight = -1;
         int idx = (int)v.getTag();
-        if(Config.FreeMode) {
+        if(Cfg.c.FreeMode) {
             playFreeChord(algebras[Type][idx]);
         } else {
             if (idx == Question) {
@@ -186,14 +186,14 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
                 GreenHighlight = idx;
                 if (NextEnabledAfter == 0) {
                     Enabled = Enabled < 7 ? Enabled + 1 : Enabled;
-                    NextEnabledAfter = Config.EnableNextAfter;
+                    NextEnabledAfter = Cfg.c.EnableNextAfter;
                 }
                 clearAllButtons();
                 playQuestion(false);
             } else {
-                if (NextEnabledAfter < Config.EnableNextAfter / 2) {
+                if (NextEnabledAfter < Cfg.c.EnableNextAfter / 2) {
                     Enabled = Enabled > 3 ? Enabled - 1 : Enabled;
-                    NextEnabledAfter = Config.EnableNextAfter;
+                    NextEnabledAfter = Cfg.c.EnableNextAfter;
                 }
                 RedHighlight = idx;
                 clearAllButtons();
@@ -205,8 +205,8 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         Runnable myRunnable = new Runnable() {
             @Override
             public void run() {
-                SystemClock.sleep(Config.DelayBetweenTones);
-                p.playChordByTones(0, ch.Resolve(Tonic, Config.NormalizedChords), Config.NoteLength*2);
+                SystemClock.sleep(Cfg.c.DelayBetweenTones);
+                p.playChordByTones(0, ch.Resolve(Tonic, Cfg.c.NormalizedChords), Cfg.c.NoteLength*2);
                 GreenHighlight = -1;
                 RedHighlight = -1;
                 clearAllButtons();
@@ -219,9 +219,9 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         Runnable myRunnable = new Runnable() {
             @Override
             public void run() {
-                SystemClock.sleep(Config.DelayBetweenTones);
+                SystemClock.sleep(Cfg.c.DelayBetweenTones);
                 p.endAll();
-                p.startChordByTones(0, ch.Resolve(Tonic, Config.NormalizedChords));
+                p.startChordByTones(0, ch.Resolve(Tonic, Cfg.c.NormalizedChords));
                 GreenHighlight = -1;
                 RedHighlight = -1;
                 clearAllButtons();

@@ -99,12 +99,12 @@ public class Player implements MidiDriver.OnMidiStartListener{
     }
 
     public void playChordByTones(int tonic, int[] tones, int duration) {
-        if(Config.ArpeggioChords) {
+        if(Cfg.c.ArpeggioChords) {
             duration /= 2;
         }
         for(int i = 0; i < tones.length; i++) {
             startNote(tonic + tones[i], chordVelocity);
-            if(Config.ArpeggioChords) {
+            if(Cfg.c.ArpeggioChords) {
                 parent.markChordToneStart(tonic + tones[i]);
                 SystemClock.sleep(duration);
             } else {
@@ -112,7 +112,7 @@ public class Player implements MidiDriver.OnMidiStartListener{
             }
         }
         SystemClock.sleep(duration);;
-        if(Config.ArpeggioChords) {
+        if(Cfg.c.ArpeggioChords) {
             parent.markChordToneReset();
         }
         for(int i = 0; i < tones.length; i++) {

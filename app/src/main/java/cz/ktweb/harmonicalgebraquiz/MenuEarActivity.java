@@ -12,11 +12,9 @@ import android.widget.Spinner;
 
 
 public class MenuEarActivity extends AppCompatActivity {
+    boolean cfgChanged = false;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ear_menu);
+    void updateValues() {
         setupDropdownBox(R.id.resolutionType);
         setupDropdownBox(R.id.scaleType);
         setupDropdownBox(R.id.restrictionType);
@@ -30,140 +28,164 @@ public class MenuEarActivity extends AppCompatActivity {
         setupCheckboxes();
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_ear_menu);
+
+        if(!Cfg.c.fromSave) {
+            Cfg.Load();
+        }
+        updateValues();
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Cfg.Save();
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroy() {
+        //Cfg.Save();
+        super.onDestroy();
+    }
+
     public void setupCheckboxes()
     {
         CheckBox checkbox = (CheckBox)findViewById(R.id.chromatics);
-        checkbox.setChecked(Config.ChromaticMode);
+        checkbox.setChecked(Cfg.c.ChromaticMode);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.ChromaticMode = isChecked;
+                Cfg.c.ChromaticMode = isChecked;
             }
         });
 
         checkbox = (CheckBox)findViewById(R.id.resolving);
-        checkbox.setChecked(Config.Resolving);
+        checkbox.setChecked(Cfg.c.Resolving);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.Resolving = isChecked;
+                Cfg.c.Resolving = isChecked;
             }
         });
 
         checkbox = (CheckBox)findViewById(R.id.interleavedResolutions);
-        checkbox.setChecked(Config.InterleavedResolutions);
+        checkbox.setChecked(Cfg.c.InterleavedResolutions);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.InterleavedResolutions = isChecked;
+                Cfg.c.InterleavedResolutions = isChecked;
             }
         });
 
         checkbox = (CheckBox)findViewById(R.id.trickyQuestions);
-        checkbox.setChecked(Config.TrickyQuestions);
+        checkbox.setChecked(Cfg.c.TrickyQuestions);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.TrickyQuestions = isChecked;
+                Cfg.c.TrickyQuestions = isChecked;
             }
         });
 
         checkbox = (CheckBox)findViewById(R.id.limitedIntervals);
-        checkbox.setChecked(Config.LimitedIntervals);
+        checkbox.setChecked(Cfg.c.LimitedIntervals);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.LimitedIntervals = isChecked;
+                Cfg.c.LimitedIntervals = isChecked;
             }
         });
 
         checkbox = (CheckBox)findViewById(R.id.intervalMode);
-        checkbox.setChecked(Config.EarIntervalLabels);
+        checkbox.setChecked(Cfg.c.EarIntervalLabels);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.EarIntervalLabels = isChecked;
+                Cfg.c.EarIntervalLabels = isChecked;
             }
         });
         checkbox = (CheckBox)findViewById(R.id.noCadences);
-        checkbox.setChecked(Config.NoCadences);
+        checkbox.setChecked(Cfg.c.NoCadences);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.NoCadences = isChecked;
+                Cfg.c.NoCadences = isChecked;
             }
         });
         checkbox = (CheckBox)findViewById(R.id.augFouthUp);
-        checkbox.setChecked(Config.AugFourthUp);
+        checkbox.setChecked(Cfg.c.AugFourthUp);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.AugFourthUp = isChecked;
+                Cfg.c.AugFourthUp = isChecked;
             }
         });
         checkbox = (CheckBox)findViewById(R.id.noGiveUpResolve);
-        checkbox.setChecked(Config.NoGiveupResolve);
+        checkbox.setChecked(Cfg.c.NoGiveupResolve);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.NoGiveupResolve = isChecked;
+                Cfg.c.NoGiveupResolve = isChecked;
             }
         });
         checkbox = (CheckBox)findViewById(R.id.hideLabels);
-        checkbox.setChecked(Config.HideLabels);
+        checkbox.setChecked(Cfg.c.HideLabels);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.HideLabels = isChecked;
+                Cfg.c.HideLabels = isChecked;
             }
         });
         checkbox = (CheckBox)findViewById(R.id.arpeggioChords);
-        checkbox.setChecked(Config.ArpeggioChords);
+        checkbox.setChecked(Cfg.c.ArpeggioChords);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.ArpeggioChords = isChecked;
+                Cfg.c.ArpeggioChords = isChecked;
             }
         });
         checkbox = (CheckBox)findViewById(R.id.arpeggioMarking);
-        checkbox.setChecked(Config.ArpeggioMarking);
+        checkbox.setChecked(Cfg.c.ArpeggioMarking);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.ArpeggioMarking = isChecked;
+                Cfg.c.ArpeggioMarking = isChecked;
             }
         });
     }
 
     public void onClickEarQuiz(View v) {
-        Config.QType = QuizType.EarQuiz;
-        Config.InvertedMode = false;
-        Config.Sets = Config.TypeOfSetCount.QuestionsInQuiz() / Config.TypeOfSetCount.QuestionsInSet();
-        Config.EarSetSize = Config.TypeOfSetCount.QuestionsInSet();
+        Cfg.c.QType = QuizType.EarQuiz;
+        Cfg.c.InvertedMode = false;
+        Cfg.c.Sets = Cfg.c.TypeOfSetCount.QuestionsInQuiz() / Cfg.c.TypeOfSetCount.QuestionsInSet();
+        Cfg.c.EarSetSize = Cfg.c.TypeOfSetCount.QuestionsInSet();
         startQuiz();
     }
 
@@ -197,17 +219,9 @@ public class MenuEarActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    public void updateResolving() {
-        if(Config.TypeOfStimuli != StimuliType.tones && Config.TypeOfStimuli != StimuliType.accompanied_tones &&  Config.TypeOfStimuli != StimuliType.accompanied_tones_inversion) {
-            ((CheckBox) findViewById(R.id.resolving)).setChecked(false);
-            Config.Resolving = false;
-        }
-
-    }
-
     public void updateChromaticState() {
-        boolean checked = Config.TypeOfRestriction.RequiresChromatic() &&  Config.TypeOfStimuli == StimuliType.tones;
-        boolean active = !Config.TypeOfRestriction.BansChromatic() && !Config.TypeOfRestriction.RequiresChromatic() && Config.TypeOfStimuli == StimuliType.tones;
+        boolean checked = Cfg.c.TypeOfRestriction.RequiresChromatic() &&  Cfg.c.TypeOfStimuli == StimuliType.tones;
+        boolean active = !Cfg.c.TypeOfRestriction.BansChromatic() && !Cfg.c.TypeOfRestriction.RequiresChromatic() && Cfg.c.TypeOfStimuli == StimuliType.tones;
         ((CheckBox)findViewById(R.id.chromatics)).setChecked(checked);
         ((CheckBox)findViewById(R.id.chromatics)).setEnabled(active);
     }
@@ -215,31 +229,31 @@ public class MenuEarActivity extends AppCompatActivity {
     public void updateSpinner(int id) {;
         int value = 0;
         if(id == R.id.resolutionType) {
-            value = Config.TypeOfResolution.Position();
+            value = Cfg.c.TypeOfResolution.Position();
         }
         if( id == R.id.scaleType) {
-            value = Config.TypeOfScale.Position();
+            value = Cfg.c.TypeOfScale.Position();
         }
         if(id == R.id.restrictionType) {
-            value = Config.TypeOfRestriction.Position();
+            value = Cfg.c.TypeOfRestriction.Position();
         }
         if(id == R.id.questionType) {
-            value = Config.TypeOfQuestion.Position();
+            value = Cfg.c.TypeOfQuestion.Position();
         }
         if(id == R.id.keyType) {
-            value = Config.TypeOfKey.Position();
+            value = Cfg.c.TypeOfKey.Position();
         }
         if(id == R.id.layoutType) {
-            value = Config.TypeOfLayout.Position();
+            value = Cfg.c.TypeOfLayout.Position();
         }
         if(id == R.id.setCountType) {
-            value = Config.TypeOfSetCount.Position();
+            value = Cfg.c.TypeOfSetCount.Position();
         }
         if(id == R.id.tempoType) {
-            value = Config.TypeOfTempo.Position();
+            value = Cfg.c.TypeOfTempo.Position();
         }
         if(id == R.id.stimuliType) {
-            value = Config.TypeOfStimuli.Position();
+            value = Cfg.c.TypeOfStimuli.Position();
         }
         final Spinner dynamicSpinner = (Spinner) findViewById(id);
         dynamicSpinner.setSelection(value);
@@ -250,31 +264,31 @@ public class MenuEarActivity extends AppCompatActivity {
 
         String[] labels = {"Oops."};
         if(id == R.id.resolutionType) {
-            labels = Config.TypeOfResolution.GetLabelArray();
+            labels = Cfg.c.TypeOfResolution.GetLabelArray();
         }
         if( id == R.id.scaleType) {
-            labels = Config.TypeOfScale.GetLabelArray();
+            labels = Cfg.c.TypeOfScale.GetLabelArray();
         }
         if(id == R.id.restrictionType) {
-            labels = Config.TypeOfRestriction.GetLabelArray();
+            labels = Cfg.c.TypeOfRestriction.GetLabelArray();
         }
         if(id == R.id.questionType) {
-            labels = Config.TypeOfQuestion.GetLabelArray();
+            labels = Cfg.c.TypeOfQuestion.GetLabelArray();
         }
         if(id == R.id.keyType) {
-            labels = Config.TypeOfKey.GetLabelArray();
+            labels = Cfg.c.TypeOfKey.GetLabelArray();
         }
         if(id == R.id.layoutType) {
-            labels = Config.TypeOfLayout.GetLabelArray();
+            labels = Cfg.c.TypeOfLayout.GetLabelArray();
         }
         if(id == R.id.setCountType) {
-            labels = Config.TypeOfSetCount.GetLabelArray();
+            labels = Cfg.c.TypeOfSetCount.GetLabelArray();
         }
         if(id == R.id.tempoType) {
-            labels = Config.TypeOfTempo.GetLabelArray();
+            labels = Cfg.c.TypeOfTempo.GetLabelArray();
         }
         if(id == R.id.stimuliType) {
-            labels = Config.TypeOfStimuli.GetLabelArray();
+            labels = Cfg.c.TypeOfStimuli.GetLabelArray();
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -288,34 +302,33 @@ public class MenuEarActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
                 if(parent.getId() == R.id.scaleType) {
-                    Config.TypeOfScale = ScaleType.ByValue(position);
+                    Cfg.c.TypeOfScale = ScaleType.ByValue(position);
                 }
                 if(parent.getId() == R.id.resolutionType) {
-                    Config.TypeOfResolution = ResolutionType.ByValue(position);
+                    Cfg.c.TypeOfResolution = ResolutionType.ByValue(position);
                 }
                 if(parent.getId() == R.id.restrictionType) {
-                    Config.TypeOfRestriction = RestrictionType.ByValue(position);
+                    Cfg.c.TypeOfRestriction = RestrictionType.ByValue(position);
                     updateChromaticState();
                 }
                 if(parent.getId() == R.id.questionType) {
-                    Config.TypeOfQuestion = QuestionPlayType.ByValue(position);
+                    Cfg.c.TypeOfQuestion = QuestionPlayType.ByValue(position);
                 }
                 if(parent.getId() == R.id.keyType) {
-                    Config.TypeOfKey = KeyType.ByValue(position);
+                    Cfg.c.TypeOfKey = KeyType.ByValue(position);
                 }
                 if(parent.getId() == R.id.layoutType) {
-                    Config.TypeOfLayout = LayoutType.ByValue(position);
+                    Cfg.c.TypeOfLayout = LayoutType.ByValue(position);
                 }
                 if(parent.getId() == R.id.setCountType) {
-                    Config.TypeOfSetCount = SetCountType.ByValue(position);
+                    Cfg.c.TypeOfSetCount = SetCountType.ByValue(position);
                 }
                 if(parent.getId() == R.id.tempoType) {
-                    Config.TypeOfTempo = TempoType.ByValue(position);
+                    Cfg.c.TypeOfTempo = TempoType.ByValue(position);
                 }
                 if(parent.getId() == R.id.stimuliType) {
-                    Config.TypeOfStimuli = StimuliType.ByValue(position);
+                    Cfg.c.TypeOfStimuli = StimuliType.ByValue(position);
                     updateChromaticState();
-                    updateResolving();
                 }
             }
 

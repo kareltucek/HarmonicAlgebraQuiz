@@ -26,25 +26,25 @@ public class MenuProgressionActivity extends AppCompatActivity {
     public void setupCheckboxes()
     {
         CheckBox checkbox = (CheckBox)findViewById(R.id.normalize);
-        checkbox.setChecked(Config.NormalizedChords);
+        checkbox.setChecked(Cfg.c.NormalizedChords);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.NormalizedChords = isChecked;
+                Cfg.c.NormalizedChords = isChecked;
             }
         });
 
 
         checkbox = (CheckBox)findViewById(R.id.freeMode);
-        checkbox.setChecked(Config.FreeMode);
+        checkbox.setChecked(Cfg.c.FreeMode);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                Config.FreeMode = isChecked;
+                Cfg.c.FreeMode = isChecked;
             }
         });
     }
@@ -60,12 +60,12 @@ public class MenuProgressionActivity extends AppCompatActivity {
     }
 
     public void onClickMajor(View v) {
-        Config.ProgressionScale = ScaleType.major;
+        Cfg.c.ProgressionScale = ScaleType.major;
         start();
     }
 
     public void onClickMinor(View v) {
-        Config.ProgressionScale = ScaleType.minor;
+        Cfg.c.ProgressionScale = ScaleType.minor;
         start();
     }
 
@@ -83,12 +83,12 @@ public class MenuProgressionActivity extends AppCompatActivity {
         String[] lab = {"Oops."};
         int pos = 0;
         if(id == R.id.labelType) {
-            lab = Config.ProgressionLabels.GetLabelArray();
-            pos = Config.ProgressionLabels.Position();
+            lab = Cfg.c.ProgressionLabels.GetLabelArray();
+            pos = Cfg.c.ProgressionLabels.Position();
         }
         if(id == R.id.keyType) {
-            lab = Config.ProgressionKey.GetLabelArray();
-            pos = Config.ProgressionKey.Position();
+            lab = Cfg.c.ProgressionKey.GetLabelArray();
+            pos = Cfg.c.ProgressionKey.Position();
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -102,10 +102,10 @@ public class MenuProgressionActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
                 if(parent.getId() == R.id.labelType) {
-                    Config.ProgressionLabels = ScaleLabelType.ByValue(position);
+                    Cfg.c.ProgressionLabels = ScaleLabelType.ByValue(position);
                 }
                 if(parent.getId() == R.id.keyType) {
-                    Config.ProgressionKey = KeyType.ByValue(position);
+                    Cfg.c.ProgressionKey = KeyType.ByValue(position);
                 }
             }
 
