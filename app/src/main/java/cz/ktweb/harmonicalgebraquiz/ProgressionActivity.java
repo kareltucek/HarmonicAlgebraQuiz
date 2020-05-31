@@ -1,7 +1,6 @@
 package cz.ktweb.harmonicalgebraquiz;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -54,56 +53,98 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
             R.id.chord_4,
             R.id.chord_5,
             R.id.chord_6,
-            R.id.chord_7
+            R.id.chord_7,
+
+            R.id.chord_8,
+            R.id.chord_9,
+            R.id.chord_10,
+            R.id.chord_11,
+
+            R.id.chord_12,
+            R.id.chord_13,
     };
 
     Chord[][] algebras = {
             {
-                    new Chord(Degree.I, ChordType.minor),
-                    new Chord(Degree.II, ChordType.dim),
-                    new Chord(Degree.iii, ChordType.major),
-                    new Chord(Degree.IV, ChordType.minor),
-                    new Chord(Degree.V, ChordType.major),
-                    new Chord(Degree.vi, ChordType.major),
-                    new Chord(Degree.vii, ChordType.major),
+                    new Chord(Degree.I, ChordType.minor, "i"),
+                    new Chord(Degree.II, ChordType.dim, "ii*"),
+                    new Chord(Degree.iii, ChordType.major, "III"),
+                    new Chord(Degree.IV, ChordType.minor, "iv"),
+                    new Chord(Degree.V, ChordType.minor, "v"),
+                    new Chord(Degree.vi, ChordType.major, "VI"),
+                    new Chord(Degree.vii, ChordType.major, "VII"),
+
+                    new Chord(Degree.II, ChordType.major, "II"),
+                    new Chord(Degree.IV, ChordType.major, "IV"),
+                    new Chord(Degree.III, ChordType.dummy, ""),
+                    new Chord(Degree.V, ChordType.major7, "V7"),
+
+                    new Chord(Degree.III, ChordType.dummy, ""),
+                    new Chord(Degree.V, ChordType.major, "V"),
             },
             {
-                    new Chord(Degree.I, ChordType.major),
-                    new Chord(Degree.II, ChordType.minor),
-                    new Chord(Degree.III, ChordType.minor),
-                    new Chord(Degree.IV, ChordType.major),
-                    new Chord(Degree.V, ChordType.major),
-                    new Chord(Degree.VI, ChordType.minor),
-                    new Chord(Degree.VII, ChordType.dim),
+                    new Chord(Degree.I, ChordType.major, "I"),
+                    new Chord(Degree.II, ChordType.minor, "ii"),
+                    new Chord(Degree.III, ChordType.minor, "iii"),
+                    new Chord(Degree.IV, ChordType.major, "IV"),
+                    new Chord(Degree.V, ChordType.major, "V"),
+                    new Chord(Degree.VI, ChordType.minor, "vi"),
+                    new Chord(Degree.VII, ChordType.dim, "vii*"),
+
+                    new Chord(Degree.II, ChordType.major, "II"),
+                    new Chord(Degree.III, ChordType.major, "III"),
+                    new Chord(Degree.III, ChordType.major7, "III7"),
+                    new Chord(Degree.VII, ChordType.major, "VII"),
+
+                    new Chord(Degree.III, ChordType.dummy, ""),
+                    new Chord(Degree.V, ChordType.major7, "V7"),
             }
     };
 
-    int[] EnablingOrder = {0, 4, 3, 5, 2, 1, 6};
+    int[] EnablingOrder = {0, 4, 3, 5, 2, 1, 6, 7, 8, 9, 10, 11, 12};
 
     int Type = 0;
     int Tonic = 0;
     int Enabled = 2;
     int NextEnabledAfter = Cfg.c.EnableNextAfter;
+
+    int PrevQuestion = 0;
     int Question = 0;
+    int Inversion = 0;
+    int InversionDir = 0;
 
     int GreenHighlight = -1;
     int RedHighlight = -1;
 
+    int errors = 0;
+    boolean errorAlreadyCounted = false;
+
 
     String determineLabel(int idx) {
         int type = Cfg.c.ProgressionScale == minor ? 0 : 1;
-        return Cfg.c.ProgressionScale.GetDegreeLabel(Cfg.c.ProgressionLabels, Tonic, algebras[type][idx].degree.Value());
+        if ( Cfg.c.ProgressionLabels == ProgressionLabelType.chord_name) {
+            return Cfg.c.ProgressionScale.GetCustomChordToneLabel(Tonic, algebras[type][idx]);
+        } else {
+            return algebras[type][idx].label;
+        }
     }
 
     void setupButton(int id, int idx) {
-        Button b = findViewById(id);
-        b.setBackgroundResource(R.drawable.round_button);
-        b.setTag(idx);
-        b.setOnClickListener(this);
-        b.setText(determineLabel(idx));
-        b.setTextAppearance(R.style.AppTheme);
-        b.setAllCaps(false);
-        b.setSingleLine(true);
+        int type = Cfg.c.ProgressionScale == minor ? 0 : 1;
+        if ( algebras[type].length > idx) {
+            Button b = findViewById(id);
+            b.setVisibility(View.VISIBLE);
+            b.setBackgroundResource(R.drawable.round_button);
+            b.setTag(idx);
+            b.setOnClickListener(this);
+            b.setText(determineLabel(idx));
+            b.setTextAppearance(R.style.AppTheme);
+            b.setAllCaps(false);
+            b.setSingleLine(true);
+        } else {
+            Button b = findViewById(id);
+            b.setVisibility(View.INVISIBLE);
+        }
     }
 
     void setupButtons() {
@@ -141,6 +182,8 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         gameStarted = true;
         Enabled = 3;
         NextEnabledAfter = Cfg.c.EnableNextAfter;
+        Inversion = 0;
+        InversionDir = 0;
         if(Cfg.c.ProgressionKey == KeyType.c) {
             Tonic = 0;
         } else {
@@ -160,15 +203,31 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
     }
 
     void playQuestion(boolean first) {
-        int previous = Question;
+        int prev2Q = PrevQuestion;
+        PrevQuestion = Question;
+        int previousQ = Question;
+        int previousInv = Inversion;
+        int previousDir = InversionDir;
+        errorAlreadyCounted = false;
         if(first) {
-            previous = 2;
+            previousQ = 2;
             Question = 0;
             GreenHighlight = 0;
             clearAllButtons();
         }
-        while (previous == Question) {
+        while ( false
+                    || (prev2Q == previousQ && previousQ == Question)
+                    || (previousQ == Question && previousInv == Inversion && (previousDir == InversionDir || Inversion == 0))
+                    || (algebras[Cfg.c.ProgressionScale == minor ? 0 : 1][Question].tpe == ChordType.dummy)
+                ) {
             Question = EnablingOrder[rnd.nextInt(Enabled)];
+            if(Cfg.c.ProgressionInversions) {
+                Inversion = rnd.nextInt(4);
+                InversionDir = rnd.nextInt(2) * 2 - 1;
+            } else {
+                Inversion = 0;
+                InversionDir = 0;
+            }
         }
         playChord(algebras[Type][Question]);
     }
@@ -184,21 +243,45 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
             if (idx == Question) {
                 NextEnabledAfter--;
                 GreenHighlight = idx;
-                if (NextEnabledAfter == 0) {
-                    Enabled = Enabled < 7 ? Enabled + 1 : Enabled;
+                if (errors >= 3) {
+                    errors = 0;
+                    Enabled = Enabled > 3 ? Enabled - 1 : Enabled;
+                    NextEnabledAfter = Cfg.c.EnableNextAfter;
+                }
+                else if (NextEnabledAfter == 0) {
+                    errors = 0;
+                    Enabled = Enabled < algebras[Type].length - 1 ? Enabled + 1 : Enabled;
+                    while ( Enabled < algebras[Type].length - 1 && algebras[Cfg.c.ProgressionScale == minor ? 0 : 1][Enabled].tpe == ChordType.dummy ) {
+                        Enabled = Enabled + 1;
+                    }
                     NextEnabledAfter = Cfg.c.EnableNextAfter;
                 }
                 clearAllButtons();
                 playQuestion(false);
             } else {
+                if(!errorAlreadyCounted) {
+                    errorAlreadyCounted = true;
+                    errors++;
+                }
+                /*
                 if (NextEnabledAfter < Cfg.c.EnableNextAfter / 2) {
                     Enabled = Enabled > 3 ? Enabled - 1 : Enabled;
                     NextEnabledAfter = Cfg.c.EnableNextAfter;
-                }
+                }*/
                 RedHighlight = idx;
                 clearAllButtons();
             }
         }
+    }
+
+    public int[] resolveChord(final Chord ch) {
+        int[] chord;
+        if( Cfg.c.ProgressionInversions) {
+            chord = ch.Resolve(Tonic, false, Inversion, InversionDir);
+        } else {
+            chord = ch.Resolve(Tonic, Cfg.c.NormalizedChords, 0, 0) ;
+        }
+        return chord;
     }
 
     public void playChord(final Chord ch) {
@@ -206,7 +289,7 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void run() {
                 SystemClock.sleep(Cfg.c.DelayBetweenTones);
-                p.playChordByTones(0, ch.Resolve(Tonic, Cfg.c.NormalizedChords), Cfg.c.NoteLength*2);
+                p.playChordByTones(0, resolveChord(ch), Cfg.c.NoteLength, Cfg.c.ProgressionArpeggio);
                 GreenHighlight = -1;
                 RedHighlight = -1;
                 clearAllButtons();
@@ -221,7 +304,7 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
             public void run() {
                 SystemClock.sleep(Cfg.c.DelayBetweenTones);
                 p.endAll();
-                p.startChordByTones(0, ch.Resolve(Tonic, Cfg.c.NormalizedChords));
+                p.startChordByTones(0, resolveChord(ch));
                 GreenHighlight = -1;
                 RedHighlight = -1;
                 clearAllButtons();

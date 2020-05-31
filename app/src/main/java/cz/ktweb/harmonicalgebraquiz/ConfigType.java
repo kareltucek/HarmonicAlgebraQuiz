@@ -81,10 +81,12 @@ public class ConfigType implements Serializable {
 
     //Progression trainer
     public ScaleType ProgressionScale = ScaleType.major;
-    public ScaleLabelType ProgressionLabels = ScaleLabelType.chord_degree;
+    public ProgressionLabelType ProgressionLabels = ProgressionLabelType.chord_degree;
     public KeyType ProgressionKey = KeyType.c;
     public int EnableNextAfter = 10;
     public boolean NormalizedChords = true;
+    public boolean ProgressionInversions = true;
+    public boolean ProgressionArpeggio = false;
     public boolean FreeMode = false;
 }
 

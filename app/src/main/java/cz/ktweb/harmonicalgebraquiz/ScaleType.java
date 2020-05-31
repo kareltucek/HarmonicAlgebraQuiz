@@ -190,6 +190,35 @@ enum ScaleType {
         return 0;
     }
 
+
+    public String GetCustomChordToneLabel(int tonic, Chord chord) {
+        int tone = tonic + chord.degree.Value();
+        int degree = (chord.degree.Value() - tonic) % 12;
+        int sharps = GetSharps(tonic);
+        SimpleLabelType sharpType = sharps >= 0 ? SimpleLabelType.major_sharps : SimpleLabelType.major_flats;
+        if(!this.Contains(degree)) {
+            return "";
+        }
+        switch ( chord.tpe) {
+
+            case major:
+            case major8:
+                return LabelStore.GetToneLabel(sharpType.GetMajor(), tone);
+            case minor:
+            case minor8:
+                return LabelStore.GetToneLabel(sharpType.GetMinor(), tone);
+            case major7:
+                return LabelStore.GetToneLabel(sharpType.GetMajor(), tone) + "7";
+            case dim:
+                return LabelStore.GetToneLabel(sharpType.GetMajor(), tone) + "*";
+            case dim7:
+                return LabelStore.GetToneLabel(sharpType.GetMinor(), tone) + "*7";
+            case dummy:
+                return "";
+        }
+        return "?";
+    }
+
     public String GetDegreeLabel(ScaleLabelType type, int tonic, int degree) {
         return GetToneLabel(type, tonic, tonic+degree);
     }
@@ -263,4 +292,5 @@ enum ScaleType {
                 return 0;
         }
     }
+
 }

@@ -71,6 +71,12 @@
                     android:visibility="invisible" />
 
                 <CheckBox
+                    android:id="@+id/inversions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="With inversions" />
+
+                <CheckBox
                     android:id="@+id/normalize"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -81,6 +87,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Free Mode" />
+
+                <CheckBox
+                    android:id="@+id/progressionArpeggio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Arpeggio chords" />
 
                 <Button
                     android:id="@+id/button30"

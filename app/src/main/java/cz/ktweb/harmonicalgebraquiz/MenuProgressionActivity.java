@@ -37,6 +37,30 @@ public class MenuProgressionActivity extends AppCompatActivity {
         });
 
 
+        checkbox = (CheckBox)findViewById(R.id.inversions);
+        checkbox.setChecked(Cfg.c.ProgressionInversions);
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                Cfg.c.ProgressionInversions = isChecked;
+            }
+        });
+
+
+        checkbox = (CheckBox)findViewById(R.id.progressionArpeggio);
+        checkbox.setChecked(Cfg.c.ProgressionArpeggio);
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                Cfg.c.ProgressionArpeggio = isChecked;
+            }
+        });
+
+
         checkbox = (CheckBox)findViewById(R.id.freeMode);
         checkbox.setChecked(Cfg.c.FreeMode);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
@@ -102,7 +126,7 @@ public class MenuProgressionActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
                 if(parent.getId() == R.id.labelType) {
-                    Cfg.c.ProgressionLabels = ScaleLabelType.ByValue(position);
+                    Cfg.c.ProgressionLabels = ProgressionLabelType.ByValue(position);
                 }
                 if(parent.getId() == R.id.keyType) {
                     Cfg.c.ProgressionKey = KeyType.ByValue(position);

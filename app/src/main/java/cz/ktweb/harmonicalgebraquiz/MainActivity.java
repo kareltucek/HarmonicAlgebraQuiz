@@ -920,7 +920,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             @Override
             public void run() {
                 int length = 60000/Cfg.c.TypeOfTempo.Tempo();
-                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length);
+                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length, Cfg.c.ArpeggioChords);
                 SystemClock.sleep(Cfg.c.DelayBetweenTones);
                 playingActive--;
             }
@@ -934,10 +934,10 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             @Override
             public void run() {
                 int length = 60000/Cfg.c.TypeOfTempo.Tempo();
-                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length);
-                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(4, 3), length);
-                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(5, 3), length);
-                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length);
+                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length, Cfg.c.ArpeggioChords);
+                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(4, 3), length, Cfg.c.ArpeggioChords);
+                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(5, 3), length, Cfg.c.ArpeggioChords);
+                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length, Cfg.c.ArpeggioChords);
                 SystemClock.sleep(Cfg.c.DelayBetweenTones);
                 playingActive--;
             }
@@ -984,17 +984,18 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                                     3,
                                     Cfg.c.TypeOfStimuli == StimuliType.accompanied_tones ? 0 : playStimuliInversion
                             ),
-                            length
+                            length,
+                            Cfg.c.ArpeggioChords
                     );
                 }
                 SystemClock.sleep(delay);
                 p.playNote(tone, length);
                 break;
             case chord:
-                p.playChordByTones(tonic, CurrentScaleType.ResolveChordInKey(tonic, tone, 3, 0), length);
+                p.playChordByTones(tonic, CurrentScaleType.ResolveChordInKey(tonic, tone, 3, 0), length, Cfg.c.ArpeggioChords);
                 break;
             case chord_inversion:
-                p.playChordByTones(tonic, CurrentScaleType.ResolveChordInKey(tonic, tone, 3, RandUtils.NextInt("chordInversion", 3)), length);
+                p.playChordByTones(tonic, CurrentScaleType.ResolveChordInKey(tonic, tone, 3, RandUtils.NextInt("chordInversion", 3)), length, Cfg.c.ArpeggioChords);
                 break;
             default:
                 throw new IllegalArgumentException();
