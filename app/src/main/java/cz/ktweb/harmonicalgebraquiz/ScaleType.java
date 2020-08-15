@@ -134,8 +134,8 @@ enum ScaleType {
      * @param tonic
      * @param fromTone
      * @param count
-     * @param skip
-     * @return chord in degrees
+     * @param skip first `skip` tones will be transposed octave up, therefore getting an inversion
+     * @return chord in degrees; no normalization applied
      */
     public int[] ResolveChordInKey (int tonic, int fromTone, int count, int skip) {
         int[] res = new int[count];

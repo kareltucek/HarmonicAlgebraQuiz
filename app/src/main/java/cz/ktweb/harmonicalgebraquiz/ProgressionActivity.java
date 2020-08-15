@@ -101,7 +101,7 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
             }
     };
 
-    int[] EnablingOrder = {0, 4, 3, 5, 2, 1, 6, 7, 8, 9, 10, 11, 12};
+    int[] EnablingOrder = {0, 4, 3, 5, 2, 1, 6, 12, 7, 8, 9, 10, 11};
 
     int Type = 0;
     int Tonic = 0;
@@ -159,6 +159,8 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         int dark = enablingOrder < Enabled ? 0 : -30;
         //b.setClickable(enablingOrder < Enabled);
         b.getBackground().setColorFilter(MathUtils.rgb(Cfg.c.bgRed -g - dark,Cfg.c.bgGreen - r - dark,Cfg.c.bgBlue - r - g - dark), PorterDuff.Mode.MULTIPLY);
+        boolean visible = enablingOrder < Enabled && b.getText() != "";
+        b.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
         b.setText(determineLabel(idx));
     }
 
@@ -250,8 +252,8 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
                 }
                 else if (NextEnabledAfter == 0) {
                     errors = 0;
-                    Enabled = Enabled < algebras[Type].length - 1 ? Enabled + 1 : Enabled;
-                    while ( Enabled < algebras[Type].length - 1 && algebras[Cfg.c.ProgressionScale == minor ? 0 : 1][Enabled].tpe == ChordType.dummy ) {
+                    Enabled = Enabled < algebras[Type].length ? Enabled + 1 : Enabled;
+                    while ( Enabled < algebras[Type].length && algebras[Cfg.c.ProgressionScale == minor ? 0 : 1][Enabled-1].tpe == ChordType.dummy ) {
                         Enabled = Enabled + 1;
                     }
                     NextEnabledAfter = Cfg.c.EnableNextAfter;

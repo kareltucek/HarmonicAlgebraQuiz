@@ -10,6 +10,7 @@ enum StimuliType {
     accompanied_tones_inversion("Accompanied tone mode with inversions"),
     chord("Chord mode"),
     chord_inversion("Chord inversion mode"),
+    guitar_chord("Guitar chord mode")
     ;
 
     private final int value;

@@ -1,7 +1,5 @@
 package cz.ktweb.harmonicalgebraquiz;
 
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Handler;
@@ -37,6 +35,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     public static boolean stopped = false;
     public static boolean wantTuning = false;
     public static GestureDetector gestureDetector = new GestureDetector();
+    public static GuitarPlayer gp;
 
 
     void addSpace(int weight, int layoutId, boolean seriously) {
@@ -247,6 +246,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             listeningThread.start();
             listeningHandler = new Handler(playThread.getLooper());
         }
+
+        gp = new GuitarPlayer(getApplicationContext());
     }
 
 
@@ -619,6 +620,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 switch(Cfg.c.TypeOfStimuli) {
                     case chord:
                     case chord_inversion:
+                    case guitar_chord:
                         return CurrentScaleType.GetToneLabel(ScaleLabelType.chord_name, TonicIds[CurrentQuestion], tone);
                     default:
                         return CurrentScaleType.GetToneLabel(ScaleLabelType.tone_name, TonicIds[CurrentQuestion], tone);
@@ -933,13 +935,21 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         Runnable myRunnable = new Runnable() {
             @Override
             public void run() {
-                int length = 60000/Cfg.c.TypeOfTempo.Tempo();
-                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length, Cfg.c.ArpeggioChords);
-                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(4, 3), length, Cfg.c.ArpeggioChords);
-                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(5, 3), length, Cfg.c.ArpeggioChords);
-                p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length, Cfg.c.ArpeggioChords);
+                int length = 60000 / Cfg.c.TypeOfTempo.Tempo();
+                if ( Cfg.c.TypeOfStimuli == StimuliType.guitar_chord) {
+                    gp.playChord ( TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3) );
+                    gp.playChord ( TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(4, 3) );
+                    gp.playChord ( TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(5, 3) );
+                    gp.playChord ( TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3) );
+                } else {
+                    p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length, Cfg.c.ArpeggioChords);
+                    p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(4, 3), length, Cfg.c.ArpeggioChords);
+                    p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(5, 3), length, Cfg.c.ArpeggioChords);
+                    p.playChordByTones(TonicIds[CurrentQuestion], CurrentScaleType.ResolveChord(1, 3), length, Cfg.c.ArpeggioChords);
+                }
                 SystemClock.sleep(Cfg.c.DelayBetweenTones);
                 playingActive--;
+
             }
         };
         playHandler.post(myRunnable);
@@ -996,6 +1006,9 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                 break;
             case chord_inversion:
                 p.playChordByTones(tonic, CurrentScaleType.ResolveChordInKey(tonic, tone, 3, RandUtils.NextInt("chordInversion", 3)), length, Cfg.c.ArpeggioChords);
+                break;
+            case guitar_chord:
+                gp.playChord ( tonic, CurrentScaleType.ResolveChordInKey(tonic, tone, 3, 0) );
                 break;
             default:
                 throw new IllegalArgumentException();
