@@ -83,6 +83,12 @@
                     android:text="Normalized Chords" />
 
                 <CheckBox
+                    android:id="@+id/progressionGuitarMode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Guitar mode" />
+
+                <CheckBox
                     android:id="@+id/freeMode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

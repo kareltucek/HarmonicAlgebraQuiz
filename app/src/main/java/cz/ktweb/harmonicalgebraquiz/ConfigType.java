@@ -86,6 +86,7 @@ public class ConfigType implements Serializable {
     public int EnableNextAfter = 10;
     public boolean NormalizedChords = true;
     public boolean ProgressionInversions = true;
+    public boolean ProgressionGuitarChords = false;
     public boolean ProgressionArpeggio = false;
     public boolean FreeMode = false;
 }

@@ -2,7 +2,8 @@ package cz.ktweb.harmonicalgebraquiz;
 
 public enum ProgressionLabelType {
     chord_degree(0, "Degrees"),
-    chord_name(1, "Tones");
+    chord_functions(1, "Functions"),
+    chord_name(2, "Tones");
 
     private final int value;
     private final String label;

@@ -48,6 +48,17 @@ public class MenuProgressionActivity extends AppCompatActivity {
             }
         });
 
+        checkbox = (CheckBox)findViewById(R.id.progressionGuitarMode);
+        checkbox.setChecked(Cfg.c.ProgressionGuitarChords);
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                Cfg.c.ProgressionGuitarChords = isChecked;
+            }
+        });
+
 
         checkbox = (CheckBox)findViewById(R.id.progressionArpeggio);
         checkbox.setChecked(Cfg.c.ProgressionArpeggio);

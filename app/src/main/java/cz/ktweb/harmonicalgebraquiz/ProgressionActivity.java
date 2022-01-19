@@ -7,6 +7,7 @@ import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 
@@ -53,55 +54,57 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
             R.id.chord_4,
             R.id.chord_5,
             R.id.chord_6,
+
             R.id.chord_7,
+            R.id.chord_7a,
+            R.id.chord_7b,
 
-            R.id.chord_8,
-            R.id.chord_9,
-            R.id.chord_10,
-            R.id.chord_11,
-
-            R.id.chord_12,
-            R.id.chord_13,
+            R.id.chord_5b,
+            R.id.chord_3b,
+            R.id.chord_2b,
     };
 
     Chord[][] algebras = {
             {
-                    new Chord(Degree.I, ChordType.minor, "i"),
-                    new Chord(Degree.II, ChordType.dim, "ii*"),
-                    new Chord(Degree.iii, ChordType.major, "III"),
-                    new Chord(Degree.IV, ChordType.minor, "iv"),
-                    new Chord(Degree.V, ChordType.minor, "v"),
-                    new Chord(Degree.vi, ChordType.major, "VI"),
-                    new Chord(Degree.vii, ChordType.major, "VII"),
+                //minor
+                    new Chord(Degree.iii, ChordType.major, "III", "I"),
+                    new Chord(Degree.IV, ChordType.minor, "iv", "iv"),
+                    new Chord(Degree.V, ChordType.minor, "v", "v"),
+                    new Chord(Degree.vi, ChordType.major, "VI", "IV"),
+                    new Chord(Degree.vii, ChordType.major, "VII", "VI"),
+                    new Chord(Degree.I, ChordType.minor, "i", "i"),
 
-                    new Chord(Degree.II, ChordType.major, "II"),
-                    new Chord(Degree.IV, ChordType.major, "IV"),
-                    new Chord(Degree.III, ChordType.dummy, ""),
-                    new Chord(Degree.V, ChordType.major7, "V7"),
+                    new Chord(Degree.II, ChordType.dim7, "ii*", "*7"),
+                    new Chord(Degree.ii, ChordType.major, "II", "*1-"),
+                    new Chord(Degree.II, ChordType.minor, "ii", "*5+"),
 
-                    new Chord(Degree.III, ChordType.dummy, ""),
-                    new Chord(Degree.V, ChordType.major, "V"),
+                    new Chord(Degree.vii, ChordType.major7, "VII7", "V7"),
+                    new Chord(Degree.V, ChordType.major7, "V7", "v3+7"),
+                    new Chord(Degree.IV, ChordType.major, "IV", "iv3+"),
             },
             {
-                    new Chord(Degree.I, ChordType.major, "I"),
-                    new Chord(Degree.II, ChordType.minor, "ii"),
-                    new Chord(Degree.III, ChordType.minor, "iii"),
-                    new Chord(Degree.IV, ChordType.major, "IV"),
-                    new Chord(Degree.V, ChordType.major, "V"),
-                    new Chord(Degree.VI, ChordType.minor, "vi"),
-                    new Chord(Degree.VII, ChordType.dim, "vii*"),
+                //major
+                    new Chord(Degree.I, ChordType.major, "I", "I"),
+                    new Chord(Degree.II, ChordType.minor, "ii", "iv"),
+                    new Chord(Degree.III, ChordType.minor, "iii", "v"),
+                    new Chord(Degree.IV, ChordType.major, "IV", "IV"),
+                    new Chord(Degree.V, ChordType.major, "V", "V"),
+                    new Chord(Degree.VI, ChordType.minor, "vi", "i"),
 
-                    new Chord(Degree.II, ChordType.major, "II"),
-                    new Chord(Degree.III, ChordType.major, "III"),
-                    new Chord(Degree.III, ChordType.major7, "III7"),
-                    new Chord(Degree.VII, ChordType.major, "VII"),
+                    new Chord(Degree.VII, ChordType.dim7, "vii*", "*7"),
+                    new Chord(Degree.vii, ChordType.major, "VII", "*1-"),
+                    new Chord(Degree.VII, ChordType.minor, "vii", "*5+"),
 
-                    new Chord(Degree.III, ChordType.dummy, ""),
-                    new Chord(Degree.V, ChordType.major7, "V7"),
+                    new Chord(Degree.V, ChordType.major7, "V7", "V7"),
+                    new Chord(Degree.III, ChordType.major7, "III7", "v3+7"),
+                    new Chord(Degree.II, ChordType.major, "II", "iv3+"),
             }
     };
 
-    int[] EnablingOrder = {0, 4, 3, 5, 2, 1, 6, 12, 7, 8, 9, 10, 11};
+    int[][] EnablingOrder = {
+            {5, 1, 2, 9, 0, 3, 9, 10, 11, 6, 7, 8}, //minor
+            {0, 3, 4, 5, 1, 2, 9, 10, 11, 6, 7, 8}, //major
+    };
 
     int Type = 0;
     int Tonic = 0;
@@ -123,7 +126,9 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
     String determineLabel(int idx) {
         int type = Cfg.c.ProgressionScale == minor ? 0 : 1;
         if ( Cfg.c.ProgressionLabels == ProgressionLabelType.chord_name) {
-            return Cfg.c.ProgressionScale.GetCustomChordToneLabel(Tonic, algebras[type][idx]);
+            return Cfg.c.ProgressionScale.GetCustomChordToneLabel(Tonic, algebras[type][idx], false);
+        } else if ( Cfg.c.ProgressionLabels == ProgressionLabelType.chord_functions) {
+            return algebras[type][idx].label2;
         } else {
             return algebras[type][idx].label;
         }
@@ -147,7 +152,16 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    void setupStopButton() {
+        Button b = findViewById(R.id.btnStop);
+        b.setVisibility(Cfg.c.FreeMode ? View.VISIBLE : View.INVISIBLE);
+        b.setBackgroundResource(R.drawable.round_button);
+        b.setTextAppearance(R.style.AppTheme);
+        b.setAllCaps(false);
+    }
+
     void setupButtons() {
+        setupStopButton();
         for(int i = 0; i < buttonIds.length; i++) {
             setupButton(buttonIds[i], i);
         }
@@ -160,7 +174,7 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         //b.setClickable(enablingOrder < Enabled);
         b.getBackground().setColorFilter(MathUtils.rgb(Cfg.c.bgRed -g - dark,Cfg.c.bgGreen - r - dark,Cfg.c.bgBlue - r - g - dark), PorterDuff.Mode.MULTIPLY);
         boolean visible = enablingOrder < Enabled && b.getText() != "";
-        b.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        //b.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
         b.setText(determineLabel(idx));
     }
 
@@ -168,10 +182,11 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-            for(int i = 0; i < buttonIds.length; i++) {
-                Button b = (Button)findViewById(buttonIds[EnablingOrder[i]]);
-                setupButtonProps(b, EnablingOrder[i], i);
-            }
+                int type = Cfg.c.ProgressionScale == minor ? 0 : 1;
+                for(int i = 0; i < buttonIds.length; i++) {
+                    Button b = (Button)findViewById(buttonIds[EnablingOrder[type][i]]);
+                    setupButtonProps(b, EnablingOrder[type][i], i);
+                }
             }
         });
     }
@@ -186,14 +201,10 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         NextEnabledAfter = Cfg.c.EnableNextAfter;
         Inversion = 0;
         InversionDir = 0;
-        if(Cfg.c.ProgressionKey == KeyType.c) {
-            Tonic = 0;
-        } else {
-            int diff = Cfg.c.ProgressionKey.Difficulty();
-            int sharps = - diff + rnd.nextInt(2*diff + 1);
-            Tonic = Cfg.c.ProgressionScale.GetTonicFromSharps(sharps);
-        }
-        Type = Cfg.c.ProgressionScale == ScaleType.minor ? 0 : 1;
+        Pair<Integer, ScaleType> randomKey = Cfg.c.ProgressionKey.SelectScale(Cfg.c.ProgressionScale);
+        Tonic = randomKey.first;
+        Type = randomKey.second == ScaleType.minor ? 0 : 1;
+        setupButtons();
         newInstrument();
         if(!Cfg.c.FreeMode) {
             clearAllButtons();
@@ -205,6 +216,7 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
     }
 
     void playQuestion(boolean first) {
+        int type = Cfg.c.ProgressionScale == minor ? 0 : 1;
         int prev2Q = PrevQuestion;
         PrevQuestion = Question;
         int previousQ = Question;
@@ -222,7 +234,7 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
                     || (previousQ == Question && previousInv == Inversion && (previousDir == InversionDir || Inversion == 0))
                     || (algebras[Cfg.c.ProgressionScale == minor ? 0 : 1][Question].tpe == ChordType.dummy)
                 ) {
-            Question = EnablingOrder[rnd.nextInt(Enabled)];
+            Question = EnablingOrder[type][rnd.nextInt(Enabled)];
             if(Cfg.c.ProgressionInversions) {
                 Inversion = rnd.nextInt(4);
                 InversionDir = rnd.nextInt(2) * 2 - 1;
@@ -234,11 +246,18 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
         playChord(algebras[Type][Question]);
     }
 
+    public void onStop(View v)
+    {
+        p.endAll();
+
+    }
+
     public void onClick(View v)
     {
         GreenHighlight = -1;
         RedHighlight = -1;
         int idx = (int)v.getTag();
+
         if(Cfg.c.FreeMode) {
             playFreeChord(algebras[Type][idx]);
         } else {
@@ -278,7 +297,9 @@ public class ProgressionActivity extends AppCompatActivity implements View.OnCli
 
     public int[] resolveChord(final Chord ch) {
         int[] chord;
-        if( Cfg.c.ProgressionInversions) {
+        if(Cfg.c.ProgressionGuitarChords) {
+            chord = ch.ResolveAsGuitarChord(Tonic);
+        } else if( Cfg.c.ProgressionInversions) {
             chord = ch.Resolve(Tonic, false, Inversion, InversionDir);
         } else {
             chord = ch.Resolve(Tonic, Cfg.c.NormalizedChords, 0, 0) ;

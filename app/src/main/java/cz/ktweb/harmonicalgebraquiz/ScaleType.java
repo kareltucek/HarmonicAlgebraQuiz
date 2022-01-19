@@ -191,12 +191,11 @@ enum ScaleType {
     }
 
 
-    public String GetCustomChordToneLabel(int tonic, Chord chord) {
+    public String GetCustomChordToneLabel(int tonic, Chord chord, boolean onlyKeyMembers) {
         int tone = tonic + chord.degree.Value();
-        int degree = (chord.degree.Value() - tonic) % 12;
         int sharps = GetSharps(tonic);
         SimpleLabelType sharpType = sharps >= 0 ? SimpleLabelType.major_sharps : SimpleLabelType.major_flats;
-        if(!this.Contains(degree)) {
+        if(onlyKeyMembers && !this.Contains(chord.degree.Value())) {
             return "";
         }
         switch ( chord.tpe) {

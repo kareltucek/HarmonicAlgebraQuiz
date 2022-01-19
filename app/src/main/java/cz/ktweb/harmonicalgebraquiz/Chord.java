@@ -6,6 +6,7 @@ enum ChordType {
     major(new int[]{0,4,7}),
     major8(new int[]{0,4,7,12}),
     minor(new int[]{0,3,7}),
+    minor7(new int[]{0,3,7,10}),
     minor8(new int[]{0,3,7,12}),
     major7(new int[]{0,4,7,10}),
     dim(new int[]{0,3,6}),
@@ -52,11 +53,13 @@ public class Chord {
     public Degree degree;
     public ChordType tpe;
     public String label;
+    public String label2;
 
-    public Chord(Degree degree, ChordType tpe, String label) {
+    public Chord(Degree degree, ChordType tpe, String label, String label2) {
         this.degree = degree;
         this.tpe = tpe;
         this.label = label;
+        this.label2 = label2;
     }
 
     //inversion == number of inverted tones
@@ -80,5 +83,28 @@ public class Chord {
         }
         Arrays.sort(res);
         return res;
+    }
+
+    public int[] ResolveAsGuitarChord(int tonic) {
+        int chordRoot = (tonic + degree.Value()) % 12;
+
+        for (GuitarChord chord : GuitarChordStore.basicChords) {
+            if (chord.tonic.Value() == chordRoot && chord.tpe == this.tpe) {
+                return chord.ResolveTones(0);
+            }
+        }
+
+        int bestDistance = 100;
+        int[] bestCandidate = {0, 1};
+
+        for (GuitarChord chord : GuitarChordStore.transposables) {
+            int candidateDistance = (chordRoot + 12*12 - chord.tonic.Value()) % 12;
+            if (candidateDistance < bestDistance && chord.tpe == this.tpe) {
+                bestDistance = candidateDistance;
+                bestCandidate = chord.ResolveTones(candidateDistance);
+            }
+        }
+
+        return bestCandidate;
     }
 }
